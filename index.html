@@ -1040,33 +1040,56 @@ IMPORTANT:
 
 JSON format: {"waybill":"","country":"","weight":"","consignee":"","phone":"","id_arc":""}`;
 
-      try {
-        let res = await fetch(
-          `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-pro:generateContent?key=${apiKey}`,
-          {
+      let payload = JSON.stringify({
+        contents: [{ parts: [
+          { text: prompt },
+          { inlineData: { mimeType: 'image/jpeg', data: base64img } }
+        ]}],
+        generationConfig: { temperature: 0, maxOutputTokens: 512 }
+      });
+
+      let modelsToTry = [
+        'gemini-1.5-flash',
+        'gemini-1.5-pro',
+        'gemini-pro-vision'
+      ];
+
+      let lastError = null;
+
+      for (let model of modelsToTry) {
+        try {
+          let res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              contents: [{ parts: [
-                { text: prompt },
-                { inlineData: { mimeType: 'image/jpeg', data: base64img } }
-              ]}],
-              generationConfig: { temperature: 0, maxOutputTokens: 512 }
-            })
+            body: payload
+          });
+
+          if (!res.ok) {
+            let err = await res.json();
+            throw new Error(err.error?.message || 'API Error ' + res.status);
           }
-        );
 
-        if (!res.ok) {
-          let err = await res.json();
-          throw new Error(err.error?.message || 'API Error ' + res.status);
+          let data = await res.json();
+          let raw = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+          let jsonStr = raw.match(/\{[\s\S]*\}/)?.[0];
+          if (!jsonStr) throw new Error('No JSON in response');
+          
+          return JSON.parse(jsonStr);
+        } catch (e) {
+          lastError = e;
+          // Jika error adalah not found, lanjut ke model berikutnya
+          if (e.message.includes('not found') || e.message.includes('not supported')) {
+            console.log(model + ' failed, trying next...');
+            continue;
+          } else {
+            // Jika error API Key atau koneksi, langsung lempar
+            throw e;
+          }
         }
-
-        let data = await res.json();
-        let raw = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-        let jsonStr = raw.match(/\{[\s\S]*\}/)?.[0];
-        if (!jsonStr) throw new Error('No JSON in response');
-        return JSON.parse(jsonStr);
-      } catch(e) {
+      }
+      
+      throw lastError;
+    } catch(e) {
         console.error('Gemini error:', e);
         throw e;
       }
