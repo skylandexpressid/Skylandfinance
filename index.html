@@ -1048,11 +1048,21 @@ JSON format: {"waybill":"","country":"","weight":"","consignee":"","phone":"","i
         generationConfig: { temperature: 0, maxOutputTokens: 512 }
       });
 
-      let modelsToTry = [
+            let modelsToTry = [
         'gemini-1.5-flash',
-        'gemini-1.5-pro',
-        'gemini-pro-vision'
+        'gemini-1.5-pro'
       ];
+
+      // DIAGNOSTIK: Ambil daftar model yang tersedia untuk API Key ini
+      try {
+        let listRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`);
+        let listData = await listRes.json();
+        if (listData.models) {
+          modelsToTry = listData.models.map(m => m.name.replace('models/', '')).filter(n => n.includes('gemini'));
+        }
+      } catch(e) {
+        console.log("Gagal mengambil daftar model");
+      }
 
       let lastError = null;
 
