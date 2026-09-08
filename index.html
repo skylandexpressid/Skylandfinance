@@ -969,363 +969,218 @@
     let isProcessing = false;
 
     // ============================================================
-    // === DATABASE NEGARA LEVEL DEWA ===
+    // === COUNTRY DATABASE ===
     // ============================================================
     const COUNTRY_DB = {
-      "Taiwan": {
-        cities: ["taipei","taichung","tainan","kaohsiung","hsinchu","taoyuan","keelung","hualien","yilan","miaoli","changhua","nantou","yunlin","chiayi","pingtung","taitung","hualien","penghu","kinmen","matsu","zhongli","banqiao","xinbei","sanchong","xindian"],
-        codes: ["tw","twn","886"],
-        keywords: ["taiwan","republic of china","中華民國","台灣","臺灣"]
-      },
-      "West Malaysia": {
-        cities: ["kuala lumpur","petaling jaya","subang jaya","shah alam","klang","ampang","cheras","kepong","setapak","wangsa maju","mont kiara","bangsar","damansara","puchong","sepang","nilai","seremban","port dickson","penang","george town","butterworth","ipoh","taiping","setiawan","teluk intan","batu pahat","johor bahru","muar","kluang","segamat","kota tinggi","mersing","pontian","kulai","alor setar","sungai petani","kuala kedah","langkawi","kangar","arau","kuantan","temerloh","mentakab","jerantut","raub","bentong","kuala lipis","kemaman","dungun","kuala terengganu","kerteh","marang","besut","kota bharu","pasir mas","tanah merah","gua musang"],
-        codes: ["my","mys","60"],
-        keywords: ["west malaysia","peninsular malaysia","semenanjung","malaysia"]
-      },
-      "East Malaysia": {
-        cities: ["kota kinabalu","sandakan","tawau","lahad datu","semporna","kudat","keningau","beaufort","kuching","miri","sibu","bintulu","limbang","sarikei","sri aman","betong","samarahan","serian","kapit","mukah","labuan"],
-        codes: [],
-        keywords: ["east malaysia","sabah","sarawak","borneo","labuan"]
-      },
-      "Singapore": {
-        cities: ["jurong","tampines","bedok","woodlands","yishun","clementi","bukit batok","hougang","ang mo kio","toa payoh","bishan","serangoon","geylang","kallang","queenstown","buona vista","novena","orchard","marina","sentosa","punggol","sengkang","pasir ris","changi","loyang","pioneer","boon lay"],
-        codes: ["sg","sgp","65"],
-        keywords: ["singapore","singapura","republic of singapore"]
-      },
-      "Hongkong": {
-        cities: ["kowloon","mong kok","central","wan chai","causeway bay","tsim sha tsui","kwun tong","sha tin","tai po","tuen mun","yuen long","tin shui wai","tung chung","sai kung","island east","kennedy town","sham shui po","to kwa wan","kwai chung","tsuen wan","tai wai","fo tan"],
-        codes: ["hk","hkg","852"],
-        keywords: ["hong kong","hongkong","hksar","特別行政區","香港"]
-      },
-      "South Korea": {
-        cities: ["seoul","busan","incheon","daegu","daejeon","gwangju","suwon","goyang","seongnam","ulsan","changwon","yongin","bucheon","jeonju","ansan","anyang","cheongju","cheonan","jinju","gimpo","pyeongtaek","siheung","hwaseong","namyangju","uijeongbu","gimhae","hanam"],
-        codes: ["kr","kor","82"],
-        keywords: ["south korea","korea selatan","republic of korea","대한민국","한국"]
-      },
-      "Australia": {
-        cities: ["sydney","melbourne","brisbane","perth","adelaide","gold coast","newcastle","canberra","sunshine coast","wollongong","hobart","geelong","townsville","cairns","darwin","toowoomba","ballarat","bendigo","launceston","albury","mackay","rockhampton","bundaberg","hervey bay","wagga","shepparton","mildura","alice springs"],
-        codes: ["au","aus","61"],
-        keywords: ["australia","commonwealth of australia","new south wales","victoria","queensland","western australia","south australia","tasmania","northern territory"]
-      },
-      "UAE / Dubai": {
-        cities: ["dubai","abu dhabi","sharjah","ajman","ras al khaimah","fujairah","umm al quwain","al ain","deira","bur dubai","jumeirah","marina","jebel ali","mirdif","rashidiya","business bay","downtown","palm","international city","discovery gardens","silicon oasis","academic city"],
-        codes: ["ae","uae","971"],
-        keywords: ["dubai","united arab emirates","uae","emirates","u.a.e","imarat"]
-      },
-      "Saudi Arabia": {
-        cities: ["riyadh","jeddah","mecca","medina","dammam","taif","tabuk","buraidah","khobar","jubail","yanbu","abha","khamis mushait","najran","hafar al batin","qatif","al ahsa","unaizah","arar","skaka","hafuf","madinah","makkah","al madinah"],
-        codes: ["sa","sau","ksa","966"],
-        keywords: ["saudi arabia","arab saudi","kingdom of saudi arabia","المملكة العربية السعودية","ksa"]
-      },
-      "Japan": {
-        cities: ["tokyo","osaka","kyoto","yokohama","nagoya","sapporo","fukuoka","hiroshima","sendai","chiba","kawasaki","kobe","kitakyushu","sakai","kumamoto","sagamihara","hamamatsu","okayama","shizuoka","naha","niigata","matsuyama","utsunomiya","kanazawa","matsumoto","akita","aomori","nagano","gifu","mito"],
-        codes: ["jp","jpn","81"],
-        keywords: ["japan","nippon","日本","nihon"]
-      },
-      "Brunei Darussalam": {
-        cities: ["bandar seri begawan","kuala belait","seria","tutong","bangar","muara","temburong"],
-        codes: ["bn","brn","673"],
-        keywords: ["brunei","brunei darussalam","negara brunei"]
-      },
-      "Philippines": {
-        cities: ["manila","quezon city","cebu","davao","zamboanga","caloocan","pasig","taguig","makati","las pinas","paranaque","pasay","valenzuela","mandaluyong","marikina","muntinlupa","san juan","navotas","malabon","pateros","cagayan de oro","iloilo","bacolod","baguio","general santos","santa rosa","antipolo","cainta","binan"],
-        codes: ["ph","phl","63"],
-        keywords: ["philippines","pilipinas","republic of the philippines","filipina"]
-      },
-      "China": {
-        cities: ["beijing","shanghai","guangzhou","shenzhen","chengdu","wuhan","tianjin","chongqing","nanjing","xian","hangzhou","qingdao","dalian","shenyang","harbin","jinan","zhengzhou","changsha","suzhou","kunming","fuzhou","changchun","guiyang","lanzhou","nanning","hefei","shijiazhuang","taiyuan","ningbo","wenzhou","xiamen"],
-        codes: ["cn","chn","86"],
-        keywords: ["china","peoples republic","prc","中国","中華人民共和國","zhongguo"]
-      },
-      "Thailand": {
-        cities: ["bangkok","chiang mai","phuket","pattaya","ayutthaya","khon kaen","hat yai","udon thani","nakhon ratchasima","chon buri","nonthaburi","pak kret","samut prakan","ubon ratchathani","chiang rai","nakhon si thammarat","sukhothai","lampang","phitsanulok","samut sakhon"],
-        codes: ["th","tha","66"],
-        keywords: ["thailand","thai","ประเทศไทย","siam","muang thai"]
-      },
-      "Vietnam": {
-        cities: ["ho chi minh","hanoi","da nang","hoi an","nha trang","haiphong","can tho","hue","vung tau","bien hoa","da lat","buon ma thuot","long xuyen","my tho","tay ninh","bac ninh","ha long","cam ranh","phan thiet","rach gia"],
-        codes: ["vn","vnm","84"],
-        keywords: ["vietnam","viet nam","việt nam","socialist republic of vietnam"]
-      }
+      "Taiwan": { keys: ["taiwan","taipei","taichung","kaohsiung","hsinchu","taoyuan","tw","886"] },
+      "West Malaysia": { keys: ["west malaysia","kuala lumpur","selangor","penang","johor","perak","kedah","melaka","pahang","terengganu","kelantan","malaysia","kl","my","60"] },
+      "East Malaysia": { keys: ["east malaysia","sabah","sarawak","kota kinabalu","kuching","miri","sandakan","borneo"] },
+      "Singapore": { keys: ["singapore","singapura","jurong","tampines","bedok","woodlands","sg","65"] },
+      "Hongkong": { keys: ["hong kong","hongkong","kowloon","central","mong kok","wan chai","hk","852"] },
+      "South Korea": { keys: ["south korea","korea","seoul","busan","incheon","daegu","daejeon","gwangju","kr","82"] },
+      "Australia": { keys: ["australia","sydney","melbourne","brisbane","perth","adelaide","canberra","au","61"] },
+      "UAE / Dubai": { keys: ["dubai","abu dhabi","sharjah","united arab emirates","uae","emirates","ae","971"] },
+      "Saudi Arabia": { keys: ["saudi","riyadh","jeddah","mecca","medina","dammam","ksa","sa","966"] },
+      "Japan": { keys: ["japan","tokyo","osaka","kyoto","yokohama","nagoya","sapporo","fukuoka","jp","81"] },
+      "Brunei Darussalam": { keys: ["brunei","bandar seri begawan","kuala belait","seria","bn","673"] },
+      "Philippines": { keys: ["philippines","manila","cebu","davao","quezon","makati","ph","63"] },
+      "China": { keys: ["china","beijing","shanghai","guangzhou","shenzhen","chengdu","wuhan","cn","86"] },
+      "Thailand": { keys: ["thailand","bangkok","chiang mai","phuket","pattaya","th","66"] },
+      "Vietnam": { keys: ["vietnam","ho chi minh","hanoi","da nang","vn","84"] }
     };
 
-    function detectCountryFromText(text) {
-      let lower = text.toLowerCase().replace(/[^a-z0-9\s]/g, ' ');
-      let scores = {};
+    function detectCountry(text) {
+      let lower = text.toLowerCase();
+      let best = null, bestScore = 0;
       for (let [country, data] of Object.entries(COUNTRY_DB)) {
-        scores[country] = 0;
-        for (let city of data.cities) {
-          if (lower.includes(city)) { scores[country] += 3; break; }
+        let score = 0;
+        for (let k of data.keys) {
+          if (lower.includes(k)) { score += (k.length > 4 ? 5 : 2); }
         }
-        for (let code of data.codes) {
-          let re = new RegExp('\\b' + code + '\\b', 'i');
-          if (re.test(lower)) { scores[country] += 2; }
-        }
-        for (let kw of data.keywords) {
-          if (lower.includes(kw.toLowerCase())) { scores[country] += 5; }
-        }
+        if (score > bestScore) { bestScore = score; best = country; }
       }
-      let best = Object.entries(scores).sort((a,b) => b[1]-a[1])[0];
-      return (best && best[1] > 0) ? best[0] : null;
+      return bestScore > 0 ? best : null;
     }
 
-    function setCountryInSelect(countryName) {
-      if (!countryName) return false;
+    function setCountry(name) {
+      if (!name) return;
       let sel = document.getElementById('negara');
-      for (let i = 1; i < sel.options.length; i++) {
-        if (sel.options[i].value === countryName) { sel.selectedIndex = i; return true; }
+      for (let i = 0; i < sel.options.length; i++) {
+        if (sel.options[i].value === name) { sel.selectedIndex = i; return; }
       }
-      return false;
     }
 
-    // Multiple image preprocessing passes for maximum OCR accuracy
-    async function preprocessForOCR(videoElement) {
-      const W = videoElement.videoWidth;
-      const H = videoElement.videoHeight;
-      
-      let results = [];
-      
-      // Pass 1: Normal high-quality capture
-      let c1 = document.createElement('canvas'); c1.width = W; c1.height = H;
-      let ctx1 = c1.getContext('2d');
-      ctx1.drawImage(videoElement, 0, 0, W, H);
-      results.push(c1.toDataURL('image/jpeg', 1.0));
-      
-      // Pass 2: High contrast + greyscale + slight sharpen
-      let c2 = document.createElement('canvas'); c2.width = W; c2.height = H;
-      let ctx2 = c2.getContext('2d');
-      ctx2.filter = 'contrast(2.0) grayscale(1) brightness(1.1)';
-      ctx2.drawImage(videoElement, 0, 0, W, H);
-      results.push(c2.toDataURL('image/jpeg', 1.0));
-      
-      // Pass 3: Binarize (extreme contrast for dark text on light bg)
-      let c3 = document.createElement('canvas'); c3.width = W; c3.height = H;
-      let ctx3 = c3.getContext('2d');
-      ctx3.filter = 'contrast(5) grayscale(1) brightness(1.3)';
-      ctx3.drawImage(videoElement, 0, 0, W, H);
-      results.push(c3.toDataURL('image/jpeg', 1.0));
-      
-      return results;
+    function saveGeminiKey(key) {
+      localStorage.setItem('gemini_key', key.trim());
     }
 
-    function mergeOCRResults(texts) {
-      // Pick best text = longest + most real words
-      return texts.sort((a, b) => {
-        let wordCount = t => (t.match(/[A-Za-z]{3,}/g) || []).length;
-        return wordCount(b) - wordCount(a);
-      })[0] || '';
+    function getGeminiKey() {
+      return localStorage.getItem('gemini_key') || '';
     }
 
-    function parseOCRText(fullText, resiVal) {
-      let txt = fullText;
-      let upper = txt.toUpperCase();
+    // ============================================================
+    // === GEMINI VISION — ULTRA ACCURATE SCAN ===
+    // ============================================================
+    async function scanWithGemini(base64img, resiVal) {
+      let apiKey = getGeminiKey();
+      if (!apiKey) return null;
+
+      let prompt = `You are reading a shipping/waybill label. Extract ALL of these fields from the image:
+1. waybill_number: the tracking/resi/AWB number (usually barcode number, long numeric or alphanumeric)
+2. country: destination country. Must be EXACTLY one of: Taiwan, West Malaysia, East Malaysia, Singapore, Hongkong, South Korea, Australia, UAE / Dubai, Saudi Arabia, Japan, Brunei Darussalam, Philippines, China, Thailand, Vietnam. Detect from destination address, city names, or country code.
+3. weight: actual weight in kg (numeric only, e.g. "2.5")
+4. consignee: recipient/consignee full name
+5. phone: recipient phone number (with country code if available)
+6. id_arc: ARC, IC, ID card, passport number of recipient
+
+IMPORTANT: 
+- For country: look at destination address carefully. "KL", "Selangor", "Penang" = West Malaysia. "Sabah","Sarawak" = East Malaysia. "SG" or "Singapore" = Singapore. etc.
+- Return ONLY valid JSON, no extra text.
+- If a field is not visible, use empty string "".
+
+JSON format: {"waybill":"","country":"","weight":"","consignee":"","phone":"","id_arc":""}`;
+
+      try {
+        let res = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{ parts: [
+                { text: prompt },
+                { inlineData: { mimeType: 'image/jpeg', data: base64img } }
+              ]}],
+              generationConfig: { temperature: 0, maxOutputTokens: 512 }
+            })
+          }
+        );
+
+        if (!res.ok) {
+          let err = await res.json();
+          throw new Error(err.error?.message || 'API Error ' + res.status);
+        }
+
+        let data = await res.json();
+        let raw = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+        let jsonStr = raw.match(/\{[\s\S]*\}/)?.[0];
+        if (!jsonStr) throw new Error('No JSON in response');
+        return JSON.parse(jsonStr);
+      } catch(e) {
+        console.error('Gemini error:', e);
+        throw e;
+      }
+    }
+
+    // ============================================================
+    // === FILL FORM FROM GEMINI RESULT ===
+    // ============================================================
+    function fillFormFromGemini(result, resiVal) {
       let filled = [];
-
-      // ---- RESI ----
-      if (!resiVal) {
-        let rPatterns = [
-          /\b[A-Z]{2}[0-9]{9}[A-Z]{2}\b/,   // Standard UPU
-          /\b[A-Z]{1,4}[0-9]{10,18}\b/,
-          /\b[0-9]{12,22}\b/
-        ];
-        for (let p of rPatterns) {
-          let m = txt.match(p);
-          if (m) { document.getElementById('resi').value = m[0]; resiVal = m[0]; filled.push('Resi'); break; }
-        }
+      if (result.waybill && !resiVal) { document.getElementById('resi').value = result.waybill; filled.push('Resi'); }
+      if (result.country) { setCountry(result.country); filled.push('Negara: ' + result.country); }
+      if (result.weight) { 
+        let w = parseFloat(result.weight.replace(',','.').replace(/[^0-9.]/g,'')); 
+        if (w > 0) { document.getElementById('beratAktual').value = w; filled.push('Berat: ' + w + 'kg'); }
       }
-
-      // ---- BERAT ----
-      let wPatterns = [
-        /(?:GROSS\s*WEIGHT|ACTUAL\s*WEIGHT|WEIGHT|BERAT|WT\.?|WGT\.?|CHARGEABLE)\s*[:\=]?\s*([\d]+[.,]?[\d]*)\s*(?:KGS?|GRS?|LBS?)?/i,
-        /(\d+[.,]\d+)\s*(?:KGS?|KG)\b/i,
-        /\b(\d+)\s*KGS?\b/i
-      ];
-      for (let p of wPatterns) {
-        let m = upper.match(p);
-        if (m) {
-          let val = parseFloat(m[1].replace(',', '.'));
-          if (val > 0 && val < 9999) {
-            document.getElementById('beratAktual').value = val;
-            filled.push('Berat ' + val + 'kg');
-            break;
-          }
-        }
-      }
-
-      // ---- NEGARA ---- (dari teks penuh + pola explicit)
-      let countryPatterns = [
-        /DESTINATION\s*COUNTRY\s*[:\-]?\s*([A-Za-z\s\/]{3,30})/i,
-        /DEST\.?\s*[:\-]?\s*([A-Za-z\s\/]{3,30})/i,
-        /TO\s*COUNTRY\s*[:\-]?\s*([A-Za-z\s\/]{3,30})/i,
-        /COUNTRY\s*[:\-]?\s*([A-Za-z\s\/]{3,30})/i
-      ];
-      let countryFound = false;
-      for (let p of countryPatterns) {
-        let m = txt.match(p);
-        if (m) {
-          let c = detectCountryFromText(m[1]);
-          if (c && setCountryInSelect(c)) { filled.push('Negara ' + c); countryFound = true; break; }
-        }
-      }
-      if (!countryFound) {
-        let c = detectCountryFromText(txt);
-        if (c && setCountryInSelect(c)) filled.push('Negara ' + c);
-      }
-
-      // ---- CONSIGNEE / NAMA PENERIMA ----
-      let namePatterns = [
-        /(?:CONSIGNEE|RECEIVER|RECIPIENT|PENERIMA|TO|SHIP\s*TO)\s*[:\-]?\s*\n?\s*([A-Z][A-Z\s\.\,\&\-]{3,50})/i,
-        /(?:CONSIGNEE|RECEIVER)\s*[:\-]\s*([^\n\r]{5,50})/i
-      ];
-      for (let p of namePatterns) {
-        let m = txt.match(p);
-        if (m) {
-          let nm = m[1].trim().split(/[\n\r]/)[0].replace(/DESCRIPTION|WEIGHT|TEL|PHONE|ADDR/ig,'').trim();
-          if (nm.length > 2 && nm.length < 60) {
-            document.getElementById('namaPenerima').value = nm;
-            filled.push('Nama');
-            break;
-          }
-        }
-      }
-
-      // ---- PHONE ----
-      let phonePatterns = [
-        /(?:TEL|PHONE|HP|HANDPHONE|MOBILE|CONTACT)\s*[:\-]?\s*([+\d][\d\s\-\.]{7,18})/i,
-        /(?:\+60|\+65|\+886|\+81|\+82|\+61|\+971|\+966|\+84|\+66|\+852|\+63|\+86|\+673)\s*[\d\s\-]{6,14}/,
-        /\b0[0-9]{8,11}\b/g
-      ];
-      for (let p of phonePatterns) {
-        let m = txt.match(p);
-        if (m) {
-          let phone = (m[1] || m[0]).replace(/[\s\-\.]/g,'');
-          if (phone.length >= 8 && phone !== resiVal) {
-            document.getElementById('hpPenerima').value = phone;
-            filled.push('HP');
-            break;
-          }
-        }
-      }
-
-      // ---- ID / ARC ----
-      let idPatterns = [
-        /(?:ARC|ID|KTP|IC|NRIC|PASSPORT|PASS NO)\s*[:\-#]?\s*([A-Z0-9]{8,18})\b/i,
-        /\b[A-Z]{1,2}[0-9]{7,9}[A-Z]?\b/
-      ];
-      for (let p of idPatterns) {
-        let m = txt.match(p);
-        if (m) {
-          let idVal = (m[1] || m[0]).trim();
-          if (idVal !== resiVal && idVal.length >= 6) {
-            document.getElementById('idArc').value = idVal;
-            filled.push('ID');
-            break;
-          }
-        }
-      }
-
+      if (result.consignee) { document.getElementById('namaPenerima').value = result.consignee; filled.push('Nama'); }
+      if (result.phone) { document.getElementById('hpPenerima').value = result.phone.replace(/[\s\-]/g,''); filled.push('HP'); }
+      if (result.id_arc) { document.getElementById('idArc').value = result.id_arc; filled.push('ID/ARC'); }
       return filled;
     }
 
+    // ============================================================
+    // === SNAP & PROCESS ===
+    // ============================================================
     async function snapAndOCR() {
       let video = document.querySelector('#reader video');
       if (!video || video.readyState < 2) {
-        Swal.fire('Kamera Belum Siap', 'Tunggu kamera terbuka lalu coba lagi.', 'warning'); return;
+        Swal.fire('Kamera Belum Siap', 'Tunggu kamera menyala lalu coba lagi.', 'warning'); return;
       }
       let snapBtn = document.getElementById('snapBtn');
-      if (snapBtn) { snapBtn.disabled = true; snapBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-2"></i>AI Membaca...'; }
-      let statusEl = document.getElementById('scanLiveStatus');
-      if (statusEl) statusEl.innerHTML = '<i class="fa-solid fa-robot fa-beat me-1"></i>Scanning...';
+      if (snapBtn) { snapBtn.disabled = true; snapBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-2"></i>Memproses...'; }
 
       let resiVal = document.getElementById('resi').value;
-      
-      // Ambil multiple preprocessed images
-      let images = await preprocessForOCR(video);
+
+      // Capture frame full resolution
+      let canvas = document.createElement('canvas');
+      canvas.width = video.videoWidth || 1280;
+      canvas.height = video.videoHeight || 720;
+      let ctx = canvas.getContext('2d');
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      let base64 = canvas.toDataURL('image/jpeg', 0.95).split(',')[1];
+
       closeCameraScanner();
 
+      let apiKey = getGeminiKey();
+
+      if (!apiKey) {
+        // Prompt user to enter API key
+        const { value: key } = await Swal.fire({
+          title: '🔑 Masukkan Gemini API Key',
+          html: `<p style="font-size:0.85rem; color:#64748b;">Dapatkan API Key GRATIS di:<br><a href="https://aistudio.google.com/app/apikey" target="_blank" style="color:#3b82f6; font-weight:bold;">aistudio.google.com/app/apikey</a></p>
+                 <input id="geminiKeyInput" class="swal2-input" placeholder="AIza......" style="font-family:monospace; font-size:0.85rem;">`,
+          confirmButtonText: 'Simpan & Scan',
+          confirmButtonColor: '#10b981',
+          showCancelButton: true,
+          cancelButtonText: 'Batal',
+          didOpen: () => {
+            let saved = localStorage.getItem('gemini_key') || '';
+            if (saved) document.getElementById('geminiKeyInput').value = saved;
+          },
+          preConfirm: () => {
+            let v = document.getElementById('geminiKeyInput').value.trim();
+            if (!v || !v.startsWith('AIza')) { Swal.showValidationMessage('API Key tidak valid. Harus dimulai dengan "AIza"'); return false; }
+            return v;
+          }
+        });
+        if (!key) {
+          let btn = document.getElementById('snapBtn');
+          if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-camera me-2"></i>SCAN SEKARANG'; }
+          return;
+        }
+        saveGeminiKey(key);
+      }
+
       Swal.fire({
-        title: '🤖 AI Multi-Pass OCR',
-        html: `<div style="text-align:left; font-size:0.85rem;">
-          <div id="ocrStep1" style="color:#94a3b8;"><i class="fa-solid fa-circle-notch fa-spin me-2"></i>Pass 1: Analisa Normal...</div>
-          <div id="ocrStep2" style="color:#475569;"><i class="fa-regular fa-circle me-2"></i>Pass 2: Kontras Tinggi...</div>
-          <div id="ocrStep3" style="color:#475569;"><i class="fa-regular fa-circle me-2"></i>Pass 3: Binarisasi...</div>
-          <div id="ocrStep4" style="color:#475569;"><i class="fa-regular fa-circle me-2"></i>Merger & Ekstraksi Cerdas...</div>
-        </div>`,
+        title: '🤖 Gemini AI Membaca Resi...',
+        html: '<i class="fa-solid fa-robot fa-beat-fade" style="font-size:3rem; color:#10b981;"></i><br><br><span style="color:#64748b; font-size:0.85rem;">Analisa gambar dengan Google Gemini Vision...<br>Biasanya selesai dalam 1-3 detik.</span>',
         allowOutsideClick: false, showConfirmButton: false
       });
 
-      let allTexts = [];
-      const stepUpdate = (id, msg) => {
-        let el = document.getElementById(id);
-        if (el) el.innerHTML = '<i class="fa-solid fa-circle-check text-success me-2"></i>' + msg;
-      };
-      const stepNext = (id, msg) => {
-        let el = document.getElementById(id);
-        if (el) el.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin text-warning me-2"></i>' + msg;
-      };
-
       try {
-        // Pass 1
-        const r1 = await Tesseract.recognize(images[0], 'eng', { 
-          tessedit_pageseg_mode: '6',
-          tessedit_ocr_engine_mode: '1'
-        });
-        allTexts.push(r1.data.text);
-        stepUpdate('ocrStep1', 'Pass 1: Selesai (' + r1.data.text.length + ' karakter)');
-        stepNext('ocrStep2', 'Pass 2: Kontras Tinggi...');
+        let result = await scanWithGemini(base64, resiVal);
+        let filled = fillFormFromGemini(result, resiVal);
 
-        // Pass 2
-        const r2 = await Tesseract.recognize(images[1], 'eng', {
-          tessedit_pageseg_mode: '6',
-          tessedit_ocr_engine_mode: '1'
-        });
-        allTexts.push(r2.data.text);
-        stepUpdate('ocrStep2', 'Pass 2: Selesai (' + r2.data.text.length + ' karakter)');
-        stepNext('ocrStep3', 'Pass 3: Binarisasi...');
-
-        // Pass 3
-        const r3 = await Tesseract.recognize(images[2], 'eng', {
-          tessedit_pageseg_mode: '6',
-          tessedit_ocr_engine_mode: '1'
-        });
-        allTexts.push(r3.data.text);
-        stepUpdate('ocrStep3', 'Pass 3: Selesai (' + r3.data.text.length + ' karakter)');
-        stepNext('ocrStep4', 'Merger & Ekstraksi Cerdas...');
-
-        // Merge — gabungkan semua teks untuk pencarian maksimal
-        let merged = allTexts.join('\n\n===\n\n');
-        let bestSingle = mergeOCRResults(allTexts);
-        
-        // Extract dari merged (lebih lengkap) tapi juga coba best single
-        let filled = parseOCRText(merged, resiVal);
-        if (filled.length < 2) filled = [...new Set([...filled, ...parseOCRText(bestSingle, resiVal)])];
-
-        stepUpdate('ocrStep4', 'Selesai! Data terisi: ' + (filled.length > 0 ? filled.join(', ') : 'Periksa kembali'));
-
-        await new Promise(r => setTimeout(r, 800));
-        
         if (filled.length > 0) {
           Swal.fire({
-            title: '✅ Berhasil!',
-            html: '<b>' + filled.join('</b>, <b>') + '</b> berhasil terdeteksi!',
-            icon: 'success', timer: 3000, showConfirmButton: false
+            title: '✅ Berhasil Terbaca!',
+            html: filled.map(f => `<span style="background:#dcfce7; color:#166534; padding:3px 10px; border-radius:20px; font-size:0.82rem; margin:3px; display:inline-block;">✓ ${f}</span>`).join(''),
+            icon: 'success', timer: 4000, showConfirmButton: false
           });
         } else {
           Swal.fire({
-            title: 'Kurang Jelas',
-            html: 'Tidak ada data terdeteksi.<br><b>Tips:</b> Pastikan resi datar, pencahayaan cukup, kamera stabil.',
-            icon: 'warning'
+            title: 'Tidak Ada Data Terbaca',
+            html: 'Pastikan seluruh teks resi terlihat jelas dan pencahayaan cukup.',
+            icon: 'warning',
+            footer: '<small>Tips: Dekatkan kamera, pastikan tidak blur</small>'
           });
         }
       } catch(e) {
-        Swal.fire('Error OCR', 'Gagal: ' + e.message, 'error');
+        // API key mungkin salah — hapus dan minta ulang
+        if (e.message.includes('API_KEY_INVALID') || e.message.includes('400') || e.message.includes('403')) {
+          localStorage.removeItem('gemini_key');
+          Swal.fire('API Key Salah', 'API Key tidak valid atau sudah expired. Silakan masukkan ulang.', 'error');
+        } else {
+          Swal.fire('Koneksi Gagal', 'Pastikan internet aktif. Error: ' + e.message, 'error');
+        }
       }
     }
 
     function openCameraScanner() {
       document.getElementById('camera-modal').classList.remove('d-none');
       isProcessing = false;
-      
+
       if (html5QrCode) {
         try { html5QrCode.stop().catch(() => {}); } catch(e) {}
         html5QrCode = null;
@@ -1339,8 +1194,7 @@
           videoConstraints: {
             facingMode: "environment",
             width: { min: 640, ideal: 1920, max: 4096 },
-            height: { min: 480, ideal: 1080, max: 2160 },
-            advanced: [{ focusMode: "continuous" }, { exposureMode: "continuous" }]
+            height: { min: 480, ideal: 1080, max: 2160 }
           }
         };
         let statusEl = document.getElementById('scanLiveStatus');
@@ -1352,12 +1206,12 @@
             beepSound();
             document.getElementById('resi').value = decodedText;
             if (statusEl) statusEl.innerHTML = '<i class="fa-solid fa-check text-warning me-1"></i>Resi: ' + decodedText.substring(0, 16) + '...';
-            await new Promise(r => setTimeout(r, 500));
+            await new Promise(r => setTimeout(r, 400));
             await snapAndOCR();
           },
           () => {}
         ).catch(() => {
-          Swal.fire('Kamera Tidak Bisa Dibuka', 'Izinkan akses kamera di pengaturan browser.', 'error');
+          Swal.fire('Kamera Tidak Bisa Dibuka', 'Izinkan akses kamera di browser Anda.', 'error');
           document.getElementById('camera-modal').classList.add('d-none');
         });
       }, 100);
