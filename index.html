@@ -1130,7 +1130,10 @@ JSON format: {"waybill":"","country":"","weight":"","consignee":"","phone":"","i
           },
           preConfirm: () => {
             let v = document.getElementById('geminiKeyInput').value.trim();
-            if (!v || !v.startsWith('AIza')) { Swal.showValidationMessage('API Key tidak valid. Harus dimulai dengan "AIza"'); return false; }
+            if (!v || (!v.startsWith('AIza') && !v.startsWith('AQ.'))) { 
+              Swal.showValidationMessage('API Key tidak valid. Biasanya dimulai dengan "AIza" atau "AQ."'); 
+              return false; 
+            }
             return v;
           }
         });
