@@ -2570,11 +2570,12 @@ ${knowledgeRegulasi}
 
 ATURAN KERJA AGENT (SANGAT PENTING & HARUS DIPATUHI STRICTLY):
 1. SEBELUM menghitung harga, cek barang apa yang akan dikirim pada bagian "REGULASI PENGIRIMAN" untuk negara tujuan (TAIWAN, MALAYSIA, atau SINGAPORE).
-2. JIKA barang ada di kategori "TIDAK BOLEH KIRIM" atau keterangannya "sedang tidak bisa kirim" untuk negara tersebut, Anda WAJIB MENOLAK pengiriman dengan sopan dan JANGAN hitung harganya!
-3. JIKA barang memiliki batas MAKSIMAL KG, pastikan berat permintaan pelanggan tidak melebihi batas. Jika lebih, tolak dengan halus dan sebutkan batas maksimalnya.
-4. PERHATIKAN KETENTUAN NEGARA: Ingatkan pelanggan soal ARC/EZWAY khusus untuk pengiriman Taiwan, dan cek syarat/ketentuan khusus lainnya untuk Malaysia dan Singapore jika tercantum.
-5. JIKA barang aman dan semua syarat terpenuhi, hitung total harga (Berat x Harga per Kg dari DATA TARIF).
-6. Jawab dengan ramah, profesional, dan gunakan emoji.`;
+2. PERHATIKAN KHUSUS MALAYSIA: Terdapat perbedaan batas berat antara Malaysia Barat (BARAT) dan Malaysia Timur / East Malaysia (TIMUR). Jika pelanggan bertanya tentang Malaysia Timur (Sabah/Sarawak), gunakan batas maksimal pada kolom (TIMUR). Jika kolom bernilai "X", artinya TIDAK BOLEH dikirim ke sana.
+3. JIKA barang ada di kategori "TIDAK BOLEH KIRIM" atau keterangannya "sedang tidak bisa kirim" atau bernilai "X" untuk negara/wilayah tersebut, Anda WAJIB MENOLAK pengiriman dengan sopan dan JANGAN hitung harganya!
+4. JIKA barang memiliki batas MAKSIMAL KG, pastikan berat permintaan pelanggan tidak melebihi batas (Bedakan batas Malaysia Barat dan Timur). Jika lebih, tolak dengan halus dan sebutkan batas maksimalnya.
+5. PERHATIKAN KETENTUAN NEGARA: Ingatkan pelanggan soal ARC/EZWAY khusus pengiriman Taiwan, dan peringatkan jika status barang adalah "RANDOM CHECKING" (Risiko tertahan di luar tanggung jawab ekspedisi).
+6. JIKA barang aman dan semua syarat terpenuhi, barulah hitung total harga (Berat x Harga per Kg dari DATA TARIF).
+7. Jawab dengan ramah, profesional, dan gunakan emoji.`;
 
         try {
             let response = await fetch(apiUrl, {
