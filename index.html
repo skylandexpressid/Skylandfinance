@@ -485,6 +485,7 @@
       <div class="d-flex gap-3 me-auto ms-5">
         <button class="btn btn-sm btn-light rounded-pill px-3 fw-bold" id="tab-btn-finance" onclick="switchPage('finance')"><i class="fa-solid fa-calculator me-1"></i> FINANCE</button>
         <button class="btn btn-sm btn-outline-light rounded-pill px-3 fw-bold" id="tab-btn-marketing" onclick="switchPage('marketing')"><i class="fa-solid fa-bullhorn me-1"></i> SALES</button>
+          <button class="btn btn-sm btn-outline-light rounded-pill px-3 fw-bold ms-2" id="tab-btn-tarif" onclick="switchPage('tarif')"><i class="fa-solid fa-tags me-1"></i> CEK TARIF</button>
         
         
       </div>
@@ -720,7 +721,59 @@
           </div>
         </div>
       </div>
-    </div> <!-- End page-finance -->
+        </div> <!-- End page-finance -->
+
+    <!-- PAGE CEK TARIF -->
+    <div id="page-tarif" class="row d-none justify-content-center">
+      <div class="col-lg-6">
+        <div class="app-card">
+          <h4 class="card-title-main"><i class="fa-solid fa-tags me-2 text-warning"></i> KALKULATOR TARIF</h4>
+          
+          <div class="mb-3">
+            <label class="form-label text-muted fw-bold">Negara Tujuan</label>
+            <select id="tarifNegara" class="form-select" style="border-radius: 10px; border: 1px solid #334155; background-color: #1e293b; color: white;">
+              <option value="">-- Pilih Negara --</option>
+              <option value="Taiwan">Taiwan</option>
+              <option value="West Malaysia">West Malaysia</option>
+              <option value="East Malaysia">East Malaysia</option>
+              <option value="Singapore">Singapore</option>
+              <option value="Hongkong">Hongkong</option>
+              <option value="South Korea">South Korea</option>
+              <option value="Australia">Australia</option>
+              <option value="UAE / Dubai">UAE / Dubai</option>
+              <option value="Saudi Arabia">Saudi Arabia</option>
+            </select>
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label text-muted fw-bold">Berat Aktual (Kg)</label>
+            <div class="input-group">
+              <input type="number" id="tarifBerat" class="form-control" step="0.1" placeholder="Masukkan berat paket..." style="border-radius: 10px 0 0 10px; border: 1px solid #334155; background-color: #1e293b; color: white;">
+              <span class="input-group-text fw-bold text-dark" style="background: var(--gold); border: none; border-radius: 0 10px 10px 0;">KG</span>
+            </div>
+          </div>
+
+          <button class="btn btn-warning w-100 fw-bold py-3 mb-4" style="border-radius:15px; font-size:1.1rem; box-shadow:0 4px 15px rgba(245,158,11,.3);" onclick="hitungTarifKhusus()"><i class="fa-solid fa-calculator me-2"></i> CEK HARGA SEKARANG</button>
+
+          <!-- RESULT CARD -->
+          <div id="tarifResult" class="d-none" style="background: linear-gradient(135deg, #1e293b, #0f172a); border: 1px solid #334155; border-radius: 15px; padding: 25px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.3); animation: fadeIn 0.5s ease;">
+            <p class="text-muted mb-1 fw-bold" style="letter-spacing: 1px; font-size:0.85rem;">ESTIMASI BIAYA PENGIRIMAN</p>
+            <h1 id="tarifTotal" class="fw-bold mb-4" style="color: #10b981; font-size: 2.8rem; text-shadow: 0 0 20px rgba(16,185,129,0.4);">Rp 0</h1>
+            
+            <div class="row text-center" style="border-top: 1px dashed #334155; padding-top: 15px;">
+              <div class="col-6" style="border-right: 1px solid #334155;">
+                <p class="text-muted mb-1" style="font-size:0.8rem;">Chargeable Weight</p>
+                <h5 id="tarifCW" class="text-white fw-bold">0 Kg</h5>
+              </div>
+              <div class="col-6">
+                <p class="text-muted mb-1" style="font-size:0.8rem;">Harga per Kg</p>
+                <h5 id="tarifPerKg" class="text-white fw-bold">Rp 0</h5>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- PAGE MARKETING (WA BLAST) -->
     <div id="page-marketing" class="row d-none">
@@ -1240,29 +1293,37 @@ function initDatabase() {
        return map[country] || country.toUpperCase().substring(0,3);
     }
 
-    function switchPage(page) {
+        function switchPage(page) {
       let btnF = document.getElementById("tab-btn-finance");
       let btnM = document.getElementById("tab-btn-marketing");
-      let btnO = document.getElementById("tab-btn-owner");
+      let btnT = document.getElementById("tab-btn-tarif");
+      
       let pageF = document.getElementById("page-finance");
       let pageM = document.getElementById("page-marketing");
-      let pageO = document.getElementById("page-owner");
+      let pageT = document.getElementById("page-tarif");
 
-      if(page === "finance") {
+      if (page === "finance") {
           if(pageF) pageF.classList.remove("d-none");
           if(pageM) pageM.classList.add("d-none");
-          if(pageO) pageO.style.display = "none";
+          if(pageT) pageT.classList.add("d-none");
           if(btnF) btnF.className = "btn btn-sm btn-light rounded-pill px-3 fw-bold shadow-sm";
           if(btnM) btnM.className = "btn btn-sm btn-outline-light rounded-pill px-3 fw-bold opacity-75 ms-2";
-          
+          if(btnT) btnT.className = "btn btn-sm btn-outline-light rounded-pill px-3 fw-bold opacity-75 ms-2";
       } else if (page === "marketing") {
           if(pageF) pageF.classList.add("d-none");
           if(pageM) pageM.classList.remove("d-none");
-          if(pageO) pageO.style.display = "none";
+          if(pageT) pageT.classList.add("d-none");
           if(btnM) btnM.className = "btn btn-sm btn-light rounded-pill px-3 fw-bold shadow-sm ms-2";
           if(btnF) btnF.className = "btn btn-sm btn-outline-light rounded-pill px-3 fw-bold opacity-75";
-          
+          if(btnT) btnT.className = "btn btn-sm btn-outline-light rounded-pill px-3 fw-bold opacity-75 ms-2";
           loadMarketingData();
+      } else if (page === "tarif") {
+          if(pageF) pageF.classList.add("d-none");
+          if(pageM) pageM.classList.add("d-none");
+          if(pageT) pageT.classList.remove("d-none");
+          if(btnT) btnT.className = "btn btn-sm btn-light rounded-pill px-3 fw-bold shadow-sm ms-2";
+          if(btnF) btnF.className = "btn btn-sm btn-outline-light rounded-pill px-3 fw-bold opacity-75";
+          if(btnM) btnM.className = "btn btn-sm btn-outline-light rounded-pill px-3 fw-bold opacity-75 ms-2";
       }
     }
     
@@ -1689,6 +1750,33 @@ function initDatabase() {
     }
 
     // HITUNG BIAYA
+        function hitungTarifKhusus() {
+      let negara = document.getElementById('tarifNegara').value;
+      let berat = parseFloat(document.getElementById('tarifBerat').value) || 0;
+      
+      if (!negara || berat <= 0) {
+        Swal.fire('Data Tidak Lengkap', 'Pilih negara dan masukkan berat (Kg).', 'warning');
+        return;
+      }
+
+      let cw = Math.ceil(berat);
+      let tarifDipilih = masterTarif.find(t => t.negara === negara && cw >= t.minBerat && cw <= t.maxBerat);
+      
+      if (!tarifDipilih) {
+        Swal.fire('Tarif Tidak Ditemukan', `Rentang berat ${cw} Kg belum diatur untuk ${negara}.`, 'error');
+        document.getElementById('tarifResult').classList.add('d-none');
+        return;
+      }
+
+      let total = tarifDipilih.tarifJual * cw;
+
+      document.getElementById('tarifCW').innerText = cw + " Kg";
+      document.getElementById('tarifPerKg').innerText = formatRp(tarifDipilih.tarifJual);
+      document.getElementById('tarifTotal').innerText = formatRp(total);
+      
+      document.getElementById('tarifResult').classList.remove('d-none');
+    }
+
     function hitungBiaya() {
       let negara = document.getElementById('negara').value;
       let beratAktual = parseFloat(document.getElementById('beratAktual').value) || 0;
