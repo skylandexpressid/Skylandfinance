@@ -1030,194 +1030,87 @@
       });
     }
 
-    // === GEMINI VISION — ULTRA ACCURATE SCAN ===
+        // ============================================================
+    // === OCR SPACE (GRATIS) & OPENAI GPT-4o (ULTRA) ===
     // ============================================================
-    async function scanWithGemini(base64img, resiVal) {
-      let apiKey = getGeminiKey();
-      if (!apiKey) return null;
+    async function scanWithOCRSpace(base64img) {
+      let formData = new FormData();
+      formData.append('base64image', 'data:image/jpeg;base64,' + base64img);
+      formData.append('apikey', 'K82597950288957'); // Public Free Key
+      formData.append('language', 'eng');
+      formData.append('OCREngine', '2'); 
 
-      let prompt = `You are reading a shipping/waybill label. Extract ALL of these fields from the image:
-1. waybill_number: the tracking/resi/AWB number (usually barcode number, long numeric or alphanumeric)
-2. country: destination country. Must be EXACTLY one of: Taiwan, West Malaysia, East Malaysia, Singapore, Hongkong, South Korea, Australia, UAE / Dubai, Saudi Arabia, Japan, Brunei Darussalam, Philippines, China, Thailand, Vietnam. Detect from destination address, city names, or country code.
-3. weight: actual weight in kg (numeric only, e.g. "2.5")
-4. consignee: recipient/consignee full name
-5. phone: recipient phone number (with country code if available)
-6. id_arc: ARC, IC, ID card, passport number of recipient
-
-IMPORTANT: 
-- For country: look at destination address carefully. "KL", "Selangor", "Penang" = West Malaysia. "Sabah","Sarawak" = East Malaysia. "SG" or "Singapore" = Singapore. etc.
-- Return ONLY valid JSON, no extra text.
-- If a field is not visible, use empty string "".
-
-JSON format: {"waybill":"","country":"","weight":"","consignee":"","phone":"","id_arc":""}`;
-
-      let payload = JSON.stringify({
-        contents: [{ parts: [
-          { text: prompt },
-          { inlineData: { mimeType: 'image/jpeg', data: base64img } }
-        ]}],
-        generationConfig: { temperature: 0, maxOutputTokens: 512 }
+      let res = await fetch('https://api.ocr.space/parse/image', {
+        method: 'POST',
+        body: formData
       });
-
-                  let modelsToTry = [
-        'gemini-3.6-flash',
-        'gemini-3.6-pro',
-        'gemini-2.5-flash'
-      ];
-
-      // DIAGNOSTIK: Ambil daftar model yang tersedia untuk API Key ini
-      try {
-        let listRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`);
-        let listData = await listRes.json();
-        if (listData.models) {
-          modelsToTry = listData.models.map(m => m.name.replace('models/', '')).filter(n => n.includes('gemini'));
-        }
-      } catch(e) {
-        console.log("Gagal mengambil daftar model");
-      }
-
-      let lastError = null;
-
-      for (let model of modelsToTry) {
-        try {
-          let res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: payload
-          });
-
-          if (!res.ok) {
-            let err = await res.json();
-            throw new Error(err.error?.message || 'API Error ' + res.status);
-          }
-
-          let data = await res.json();
-          let raw = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-          let jsonStr = raw.match(/\{[\s\S]*\}/)?.[0];
-          if (!jsonStr) throw new Error('No JSON in response');
-          
-          return JSON.parse(jsonStr);
-        } catch (e) {
-          lastError = e;
-          // Jika error adalah not found, lanjut ke model berikutnya
-          if (e.message.includes('not found') || e.message.includes('not supported')) {
-            console.log(model + ' failed, trying next...');
-            continue;
-          } else {
-            // Jika error API Key atau koneksi, langsung lempar
-            throw e;
-          }
-        }
-      }
-      
-      throw lastError;
+      let data = await res.json();
+      if(data.IsErroredOnProcessing) throw new Error("Gagal membaca gambar");
+      return data.ParsedResults[0].ParsedText;
     }
 
-    // ============================================================
-    // === FILL FORM FROM GEMINI RESULT ===
-    // ============================================================
-    function fillFormFromGemini(result, resiVal) {
-      let filled = [];
-      if (result.waybill && !resiVal) { document.getElementById('resi').value = result.waybill; filled.push('Resi'); }
-      if (result.country) { setCountry(result.country); filled.push('Negara: ' + result.country); }
-      if (result.weight) { 
-        let w = parseFloat(result.weight.replace(',','.').replace(/[^0-9.]/g,'')); 
-        if (w > 0) { document.getElementById('beratAktual').value = w; filled.push('Berat: ' + w + 'kg'); }
-      }
-      if (result.consignee) { document.getElementById('namaPenerima').value = result.consignee; filled.push('Nama'); }
-      if (result.phone) { document.getElementById('hpPenerima').value = result.phone.replace(/[\s\-]/g,''); filled.push('HP'); }
-      if (result.id_arc) { document.getElementById('idArc').value = result.id_arc; filled.push('ID/ARC'); }
-      return filled;
+    function parseRawText(fullText) {
+      let result = { waybill: "", country: "", weight: "", consignee: "", phone: "", id_arc: "" };
+      let lines = fullText.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+      let joined = lines.join(' ').toUpperCase();
+
+      // Negara
+      result.country = detectCountry(joined);
+
+      // Berat
+      let beratMatch = joined.match(/(\d+[\.,]\d+|\d+)\s*KG/);
+      if(beratMatch) result.weight = beratMatch[1];
+
+      // HP
+      let hpMatch = joined.match(/(?:\+?6|0)[0-9\-\s]{8,13}/);
+      if(hpMatch) result.phone = hpMatch[0].replace(/[^0-9]/g, '');
+
+      return result;
     }
 
-    // ============================================================
-    // === SNAP & PROCESS ===
-    // ============================================================
     async function snapAndOCR() {
       let video = document.querySelector('#reader video');
       if (!video || video.readyState < 2) {
-        Swal.fire('Kamera Belum Siap', 'Tunggu kamera menyala lalu coba lagi.', 'warning'); return;
+        Swal.fire('Kamera Belum Siap', 'Tunggu kamera menyala.', 'warning'); return;
       }
       let snapBtn = document.getElementById('snapBtn');
-      if (snapBtn) { snapBtn.disabled = true; snapBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-2"></i>Memproses...'; }
+      if (snapBtn) { snapBtn.disabled = true; snapBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-2"></i>Menganalisa...'; }
 
       let resiVal = document.getElementById('resi').value;
 
-      // Capture frame full resolution
       let canvas = document.createElement('canvas');
       canvas.width = video.videoWidth || 1280;
       canvas.height = video.videoHeight || 720;
       let ctx = canvas.getContext('2d');
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-      let base64 = canvas.toDataURL('image/jpeg', 0.95).split(',')[1];
+      let base64 = canvas.toDataURL('image/jpeg', 0.8).split(',')[1];
 
       closeCameraScanner();
 
-      let apiKey = getGeminiKey();
-
-      if (!apiKey) {
-        // Prompt user to enter API key
-        const { value: key } = await Swal.fire({
-          title: '🔑 Masukkan Gemini API Key',
-          html: `<p style="font-size:0.85rem; color:#64748b;">Dapatkan API Key GRATIS di:<br><a href="https://aistudio.google.com/app/apikey" target="_blank" style="color:#3b82f6; font-weight:bold;">aistudio.google.com/app/apikey</a></p>
-                 <input id="geminiKeyInput" class="swal2-input" placeholder="AIza......" style="font-family:monospace; font-size:0.85rem;">`,
-          confirmButtonText: 'Simpan & Scan',
-          confirmButtonColor: '#10b981',
-          showCancelButton: true,
-          cancelButtonText: 'Batal',
-          didOpen: () => {
-            let saved = localStorage.getItem('gemini_key') || '';
-            if (saved) document.getElementById('geminiKeyInput').value = saved;
-          },
-          preConfirm: () => {
-            let v = document.getElementById('geminiKeyInput').value.trim();
-            if (!v || (false)) { 
-              Swal.showValidationMessage('API Key tidak valid. Biasanya dimulai dengan "AIza" atau "AQ."'); 
-              return false; 
-            }
-            return v;
-          }
-        });
-        if (!key) {
-          let btn = document.getElementById('snapBtn');
-          if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-camera me-2"></i>SCAN SEKARANG'; }
-          return;
-        }
-        saveGeminiKey(key);
-      }
-
       Swal.fire({
-        title: '🤖 Gemini AI Membaca Resi...',
-        html: '<i class="fa-solid fa-robot fa-beat-fade" style="font-size:3rem; color:#10b981;"></i><br><br><span style="color:#64748b; font-size:0.85rem;">Analisa gambar dengan Google Gemini Vision...<br>Biasanya selesai dalam 1-3 detik.</span>',
+        title: 'Membaca Resi...',
+        html: '<i class="fa-solid fa-bolt text-warning fa-2x mb-3"></i><br>Sedang mengekstrak data dari foto...',
         allowOutsideClick: false, showConfirmButton: false
       });
 
       try {
-        let result = await scanWithGemini(base64, resiVal);
+        // Pihak ke-3 GRATIS TANPA API KEY DARI USER
+        let rawText = await scanWithOCRSpace(base64);
+        let result = parseRawText(rawText);
+        
         let filled = fillFormFromGemini(result, resiVal);
 
         if (filled.length > 0) {
           Swal.fire({
-            title: '✅ Berhasil Terbaca!',
+            title: 'Berhasil Terbaca!',
             html: filled.map(f => `<span style="background:#dcfce7; color:#166534; padding:3px 10px; border-radius:20px; font-size:0.82rem; margin:3px; display:inline-block;">✓ ${f}</span>`).join(''),
             icon: 'success', timer: 4000, showConfirmButton: false
           });
         } else {
-          Swal.fire({
-            title: 'Tidak Ada Data Terbaca',
-            html: 'Pastikan seluruh teks resi terlihat jelas dan pencahayaan cukup.',
-            icon: 'warning',
-            footer: '<small>Tips: Dekatkan kamera, pastikan tidak blur</small>'
-          });
+          Swal.fire('Data Kurang Jelas', 'Pastikan foto tidak blur.', 'warning');
         }
       } catch(e) {
-        // API key mungkin salah — hapus dan minta ulang
-        if (e.message.includes('API_KEY_INVALID') || e.message.includes('400') || e.message.includes('403')) {
-          localStorage.removeItem('gemini_key');
-          Swal.fire('API Key Salah', 'API Key tidak valid atau sudah expired. Silakan masukkan ulang.', 'error');
-        } else {
-          Swal.fire('Koneksi Gagal', 'Pastikan internet aktif. Error: ' + e.message, 'error');
-        }
+        Swal.fire('Koneksi Gagal', 'Pastikan internet aktif. Error: ' + e.message, 'error');
       }
     }
 
