@@ -1038,7 +1038,11 @@
       if (shipperLine) {
         let parts = shipperLine.split(/[:;]/);
         if (parts.length > 1) {
-          result.shipper = parts[1].replace(/[^A-Z\s\.\&]/g, '').trim();
+                    result.shipper = parts[1].replace(/[^A-Z\s\.\&]/g, '').trim();
+          // Jika OCR menggabungkan nama dan alamat, dan ini adalah resi Skyland, potong bersih!
+          if (result.shipper.includes('SKYLAND EXPRESS')) {
+            result.shipper = 'SKYLAND EXPRESS';
+          }
         }
       }
 
@@ -1179,7 +1183,7 @@
         html5QrCode = new Html5Qrcode("reader");
         let config = {
           fps: 15,
-          qrbox: { width: 300, height: 400 },
+          
           videoConstraints: {
             facingMode: "environment",
             width: { min: 640, ideal: 1920, max: 4096 },
