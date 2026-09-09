@@ -1021,8 +1021,27 @@
     }
     
     const db = firebase.database();
-    
-    // AUTO MIGRATION: Local to Cloud
+
+if (typeof db !== "undefined") {
+    db.ref("global_users").once("value", snap => {
+        if (!snap.exists()) {
+            let localUsers = localStorage.getItem("sky_users");
+            if (localUsers) {
+                db.ref("global_users").set(JSON.parse(localUsers));
+            }
+        }
+    });
+
+    db.ref("global_users").on("value", snap => {
+        if (snap.exists()) {
+            localStorage.setItem("sky_users", JSON.stringify(snap.val()));
+            let modalList = document.getElementById('modalUserList');
+            if (modalList && modalList.innerHTML !== "") {
+                if (typeof renderModalOwnerList === "function") renderModalOwnerList();
+            }
+        }
+    });
+}// AUTO MIGRATION: Local to Cloud
     db.ref("transactions").once("value").then((snapshot) => {
         if (!snapshot.exists() || snapshot.val() === null) {
             let localData = JSON.parse(localStorage.getItem("skyland_tx"));
