@@ -462,26 +462,20 @@
     <div class="auth-box">
       <div class="auth-brand">🚀 SKYLAND EXPRESS</div>
       <div class="auth-sub">Sistem Keuangan &amp; Logistik Enterprise</div>
-      <div class="auth-tabs">
-        <button class="auth-tab active" id="tabLogin" onclick="switchTab('login')">
-          <i class="fa-solid fa-right-to-bracket me-1"></i> MASUK
-        </button>
-        
-      </div>
       <div id="auth-login-form">
         <input type="text" id="loginUser" class="auth-input" placeholder="Username">
         <input type="password" id="loginPass" class="auth-input" placeholder="Password">
         <button class="auth-btn" onclick="doLogin()">
           <i class="fa-solid fa-right-to-bracket me-2"></i> MASUK
         </button>
-        <div class="auth-error" id="loginError">
-          <i class="fa-solid fa-circle-exclamation me-1"></i> Username atau Password salah!
+                  <div class="auth-error" id="loginError">
+            <i class="fa-solid fa-circle-exclamation me-1"></i> Username atau Password salah!
+          </div>
         </div>
       </div>
-      </div>
+    </div>
 
-
-  <!-- NAVBAR -->
+    <!-- NAVBAR -->
   <div class="premium-navbar">
     <div class="container-fluid px-4 d-flex justify-content-between align-items-center">
       <h1 class="brand-title d-flex align-items-center">
@@ -666,9 +660,10 @@
               <div class="col-md-6 mb-3">
                 <label class="form-label">Berat Aktual (Kg)</label>
                 <div class="input-group">
-                  <input type="number" step="0.01" id="beratAktual" class="form-control" value="0" required>
-                  <span class="input-group-text">KG</span>
-                </div>
+  <input type="number" step="0.01" id="beratAktual" class="form-control" value="0" required>
+  <span class="input-group-text" style="border-right: none;">KG</span>
+  <button class="btn btn-warning text-dark fw-bold" type="button" onclick="openVolumeModal('finance')" title="Hitung Volume"><i class="fa-solid fa-box-open"></i></button>
+</div>
               </div>
               <div class="col-md-6 mb-3">
                 <label class="form-label">Tambahan & Deskripsi (Contoh: Repack)</label>
@@ -755,6 +750,7 @@
             <label class="form-label text-muted fw-bold">Berat Aktual (Kg)</label>
             <div class="input-group">
               <input type="number" id="tarifBerat" class="form-control" step="0.1" placeholder="Masukkan berat paket..." style="border-radius: 10px 0 0 10px; border: 1px solid #334155; background-color: #1e293b; color: white;">
+                    <button class="btn btn-secondary" type="button" onclick="openVolumeModal('tarif')" style="border-radius: 0 10px 10px 0;" title="Hitung Volume"><i class="fa-solid fa-box"></i></button>
               <span class="input-group-text fw-bold text-dark" style="background: var(--gold); border: none; border-radius: 0 10px 10px 0;">KG</span>
             </div>
           </div>
@@ -1027,7 +1023,8 @@
       "Philippines": { keys: ["philippines","manila","cebu","davao","quezon","makati","ph","63"] },
       "China": { keys: ["china","beijing","shanghai","guangzhou","shenzhen","chengdu","wuhan","cn","86"] },
       "Thailand": { keys: ["thailand","bangkok","chiang mai","phuket","pattaya","th","66"] },
-      "Vietnam": { keys: ["vietnam","ho chi minh","hanoi","da nang","vn","84"] }
+      "Vietnam": { keys: ["vietnam","ho chi minh","hanoi","da nang","vn","84"] },
+      "India": { keys: ["india","new delhi","mumbai","bangalore","chennai","kolkata","hyderabad","in","91"] }
     };
 
     function detectCountry(text) {
@@ -1257,26 +1254,40 @@
       if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-camera me-2"></i>SCAN SEKARANG (OCR PENUH)'; }
     }
 
-function initDatabase() {
-      const dataAsli = [
-        ["TW", "Taiwan", "Vendor A", 1, 2, 62500, 95000, "Aktif"], ["TW", "Taiwan", "Vendor A", 3, 5, 62500, 90000, "Aktif"], ["TW", "Taiwan", "Vendor A", 6, 10, 60000, 85000, "Aktif"], ["TW", "Taiwan", "Vendor A", 11, 20, 58000, 82000, "Aktif"], ["TW", "Taiwan", "Vendor A", 21, 30, 58000, 75000, "Aktif"], ["TW", "Taiwan", "Vendor A", 31, 50, 58000, 70000, "Aktif"], ["TW", "Taiwan", "Vendor A", 51, 999, 58000, 67000, "Aktif"],
-        ["MY-W", "West Malaysia", "Vendor A", 1, 2, 57500, 87000, "Aktif"], ["MY-W", "West Malaysia", "Vendor A", 3, 5, 57500, 82000, "Aktif"], ["MY-W", "West Malaysia", "Vendor A", 6, 10, 40000, 70000, "Aktif"], ["MY-W", "West Malaysia", "Vendor A", 11, 20, 40000, 65000, "Aktif"], ["MY-W", "West Malaysia", "Vendor A", 21, 25, 35000, 60000, "Aktif"], ["MY-W", "West Malaysia", "Vendor A", 26, 30, 35000, 55000, "Aktif"], ["MY-W", "West Malaysia", "Vendor A", 31, 50, 35000, 50000, "Aktif"], ["MY-W", "West Malaysia", "Vendor A", 51, 99, 35000, 45000, "Aktif"], ["MY-W", "West Malaysia", "Vendor A", 100, 999, 35000, 43000, "Aktif"],
-        ["MY-E", "East Malaysia", "Vendor A", 1, 2, 90000, 135000, "Aktif"], ["MY-E", "East Malaysia", "Vendor A", 3, 49, 90000, 130000, "Aktif"], ["MY-E", "East Malaysia", "Vendor A", 50, 99, 85000, 121500, "Aktif"], ["MY-E", "East Malaysia", "Vendor A", 100, 999, 80000, 114500, "Aktif"],
-        ["SG", "Singapore", "Vendor A", 1, 1, 72500, 90000, "Aktif"], ["SG", "Singapore", "Vendor A", 2, 2, 50000, 90000, "Aktif"], ["SG", "Singapore", "Vendor A", 3, 5, 50000, 80000, "Aktif"], ["SG", "Singapore", "Vendor A", 6, 10, 45000, 70000, "Aktif"], ["SG", "Singapore", "Vendor A", 11, 20, 45000, 65000, "Aktif"], ["SG", "Singapore", "Vendor A", 21, 30, 40000, 60000, "Aktif"], ["SG", "Singapore", "Vendor A", 31, 50, 35000, 55000, "Aktif"], ["SG", "Singapore", "Vendor A", 51, 100, 35000, 50000, "Aktif"], ["SG", "Singapore", "Vendor A", 101, 999, 32500, 46500, "Aktif"],
-        ["HK", "Hongkong", "Vendor A", 1, 1, 185000, 290000, "Aktif"], ["HK", "Hongkong", "Vendor A", 2, 2, 160000, 190000, "Aktif"], ["HK", "Hongkong", "Premium", 3, 5, 160000, 140000, "Aktif"], ["HK", "Hongkong", "Premium", 6, 20, 150000, 95000, "Aktif"], ["HK", "Hongkong", "Premium", 21, 30, 140000, 90000, "Aktif"], ["HK", "Hongkong", "Premium", 31, 999, 135000, 90000, "Aktif"],
-        ["KR", "South Korea", "Vendor A", 1, 1, 150000, 240000, "Aktif"], ["KR", "South Korea", "Vendor A", 2, 5, 115000, 210000, "Aktif"], ["KR", "South Korea", "Vendor A", 6, 20, 100000, 180000, "Aktif"], ["KR", "South Korea", "Premium", 21, 44, 100000, 90000, "Aktif"], ["KR", "South Korea", "Premium", 45, 999, 100000, 90000, "Aktif"],
-        ["AU", "Australia", "Vendor A", 1, 1, 250000, 325000, "Aktif"], ["AU", "Australia", "Vendor A", 2, 5, 200000, 285000, "Aktif"], ["AU", "Australia", "Vendor A", 6, 20, 165000, 240000, "Aktif"], ["AU", "Australia", "Vendor A", 21, 30, 160000, 200000, "Aktif"], ["AU", "Australia", "Premium", 31, 999, 160000, 190000, "Aktif"],
-        ["AE", "UAE / Dubai", "Vendor A", 1, 1, 220000, 335000, "Aktif"], ["AE", "UAE / Dubai", "Vendor A", 2, 5, 180000, 235000, "Aktif"], ["AE", "UAE / Dubai", "Vendor A", 6, 20, 135000, 190000, "Aktif"], ["AE", "UAE / Dubai", "Vendor A", 21, 30, 130000, 160000, "Aktif"], ["AE", "UAE / Dubai", "Vendor A", 31, 100, 125000, 150000, "Aktif"],
-        ["SA", "Saudi Arabia", "Vendor A", 1, 1, 180000, 330000, "Aktif"], ["SA", "Saudi Arabia", "Vendor A", 2, 5, 130000, 235000, "Aktif"], ["SA", "Saudi Arabia", "Vendor A", 6, 20, 105000, 180000, "Aktif"], ["SA", "Saudi Arabia", "Vendor A", 21, 30, 95000, 165000, "Aktif"],
-        ["JP", "Japan", "Vendor A", 1, 1, 250000, 325000, "Aktif"], ["JP", "Japan", "Vendor A", 2, 2, 150000, 230000, "Aktif"], ["JP", "Japan", "Vendor A", 3, 5, 150000, 215000, "Aktif"], ["JP", "Japan", "Vendor A", 6, 20, 130000, 185000, "Aktif"], ["JP", "Japan", "Vendor A", 21, 50, 110000, 160000, "Aktif"], ["JP", "Japan", "Vendor A", 51, 999, 110000, 145000, "Aktif"],
-        ["BN", "Brunei Darussalam", "Vendor A", 1, 1, 170000, 220000, "Aktif"], ["BN", "Brunei Darussalam", "Vendor A", 2, 2, 130000, 185000, "Aktif"], ["BN", "Brunei Darussalam", "Vendor A", 3, 5, 130000, 175000, "Aktif"], ["BN", "Brunei Darussalam", "Vendor A", 6, 20, 100000, 145000, "Aktif"], ["BN", "Brunei Darussalam", "Vendor A", 21, 30, 95000, 145000, "Aktif"], ["BN", "Brunei Darussalam", "Vendor A", 31, 50, 90000, 140000, "Aktif"],
-        ["PH", "Philippines", "Premium", 1, 1, 0, 240000, "Aktif"], ["PH", "Philippines", "Premium", 2, 5, 0, 140000, "Aktif"], ["PH", "Philippines", "Premium", 6, 20, 0, 100000, "Aktif"], ["PH", "Philippines", "Premium", 21, 44, 0, 95000, "Aktif"], ["PH", "Philippines", "Premium", 45, 999, 0, 95000, "Aktif"],
-        ["CN", "China", "Premium", 1, 1, 0, 240000, "Aktif"], ["CN", "China", "Premium", 2, 5, 0, 140000, "Aktif"], ["CN", "China", "Premium", 6, 20, 0, 130000, "Aktif"], ["CN", "China", "Premium", 21, 999, 0, 125000, "Aktif"],
-        ["TH", "Thailand", "Premium", 1, 1, 0, 240000, "Aktif"], ["TH", "Thailand", "Premium", 2, 5, 0, 140000, "Aktif"], ["TH", "Thailand", "Premium", 6, 20, 0, 110000, "Aktif"], ["TH", "Thailand", "Premium", 21, 999, 0, 105000, "Aktif"],
-        ["VN", "Vietnam", "Premium", 1, 1, 0, 240000, "Aktif"], ["VN", "Vietnam", "Premium", 2, 5, 0, 140000, "Aktif"], ["VN", "Vietnam", "Premium", 6, 20, 0, 110000, "Aktif"], ["VN", "Vietnam", "Premium", 21, 999, 0, 100000, "Aktif"],
-        ["IN", "India", "Premium", 1, 1, 0, 240000, "Aktif"], ["IN", "India", "Premium", 2, 5, 0, 140000, "Aktif"], ["IN", "India", "Premium", 6, 20, 0, 135000, "Aktif"], ["IN", "India", "Premium", 21, 999, 0, 135000, "Aktif"]
-      ];
-      masterTarif = dataAsli.map(t => ({ negara: t[1], minBerat: t[3], maxBerat: t[4], tarifModal: t[5], tarifJual: t[6] }));
+      function initDatabase() {
+        let dataAsli = [
+          ["TW", "Taiwan", "Premium", 1, 1, 0, 110000, "Aktif"], ["TW", "Taiwan", "Premium", 2, 5, 0, 95000, "Aktif"], ["TW", "Taiwan", "Premium", 6, 10, 0, 85000, "Aktif"], ["TW", "Taiwan", "Premium", 11, 20, 0, 80000, "Aktif"], ["TW", "Taiwan", "Premium", 21, 999, 0, 75000, "Aktif"],
+          ["MY", "West Malaysia", "Premium", 1, 1, 0, 105000, "Aktif"], ["MY", "West Malaysia", "Premium", 2, 5, 0, 85000, "Aktif"], ["MY", "West Malaysia", "Premium", 6, 20, 0, 75000, "Aktif"], ["MY", "West Malaysia", "Premium", 21, 999, 0, 65000, "Aktif"],
+          ["MY", "East Malaysia", "Premium", 1, 1, 0, 125000, "Aktif"], ["MY", "East Malaysia", "Premium", 2, 5, 0, 115000, "Aktif"], ["MY", "East Malaysia", "Premium", 6, 20, 0, 105000, "Aktif"], ["MY", "East Malaysia", "Premium", 21, 999, 0, 100000, "Aktif"],
+          ["SG", "Singapore", "Premium", 1, 1, 0, 105000, "Aktif"], ["SG", "Singapore", "Premium", 2, 5, 0, 85000, "Aktif"], ["SG", "Singapore", "Premium", 6, 20, 0, 75000, "Aktif"], ["SG", "Singapore", "Premium", 21, 999, 0, 65000, "Aktif"],
+          ["HK", "Hongkong", "Premium", 1, 1, 0, 130000, "Aktif"], ["HK", "Hongkong", "Premium", 2, 5, 0, 110000, "Aktif"], ["HK", "Hongkong", "Premium", 6, 20, 0, 95000, "Aktif"], ["HK", "Hongkong", "Premium", 21, 999, 0, 85000, "Aktif"],
+          ["KR", "South Korea", "Premium", 1, 1, 0, 210000, "Aktif"], ["KR", "South Korea", "Premium", 2, 5, 0, 125000, "Aktif"], ["KR", "South Korea", "Premium", 6, 20, 0, 115000, "Aktif"], ["KR", "South Korea", "Premium", 21, 999, 0, 105000, "Aktif"],
+          ["AU", "Australia", "Premium", 1, 1, 0, 240000, "Aktif"], ["AU", "Australia", "Premium", 2, 5, 0, 180000, "Aktif"], ["AU", "Australia", "Premium", 6, 20, 0, 160000, "Aktif"], ["AU", "Australia", "Premium", 21, 999, 0, 150000, "Aktif"],
+          ["AE", "UAE / Dubai", "Premium", 1, 1, 0, 240000, "Aktif"], ["AE", "UAE / Dubai", "Premium", 2, 5, 0, 185000, "Aktif"], ["AE", "UAE / Dubai", "Premium", 6, 20, 0, 165000, "Aktif"], ["AE", "UAE / Dubai", "Premium", 21, 999, 0, 155000, "Aktif"],
+          ["SA", "Saudi Arabia", "Premium", 1, 1, 0, 240000, "Aktif"], ["SA", "Saudi Arabia", "Premium", 2, 5, 0, 185000, "Aktif"], ["SA", "Saudi Arabia", "Premium", 6, 20, 0, 165000, "Aktif"], ["SA", "Saudi Arabia", "Premium", 21, 999, 0, 155000, "Aktif"],
+          ["JP", "Japan", "Premium", 1, 1, 0, 240000, "Aktif"], ["JP", "Japan", "Premium", 2, 5, 0, 140000, "Aktif"], ["JP", "Japan", "Premium", 6, 20, 0, 130000, "Aktif"], ["JP", "Japan", "Premium", 21, 999, 0, 125000, "Aktif"],
+          ["BN", "Brunei Darussalam", "Premium", 1, 1, 0, 240000, "Aktif"], ["BN", "Brunei Darussalam", "Premium", 2, 5, 0, 140000, "Aktif"], ["BN", "Brunei Darussalam", "Premium", 6, 20, 0, 130000, "Aktif"], ["BN", "Brunei Darussalam", "Premium", 21, 999, 0, 125000, "Aktif"],
+          ["PH", "Philippines", "Premium", 1, 1, 0, 240000, "Aktif"], ["PH", "Philippines", "Premium", 2, 5, 0, 140000, "Aktif"], ["PH", "Philippines", "Premium", 6, 20, 0, 130000, "Aktif"], ["PH", "Philippines", "Premium", 21, 999, 0, 125000, "Aktif"],
+          ["CN", "China", "Premium", 1, 1, 0, 240000, "Aktif"], ["CN", "China", "Premium", 2, 5, 0, 140000, "Aktif"], ["CN", "China", "Premium", 6, 20, 0, 130000, "Aktif"], ["CN", "China", "Premium", 21, 999, 0, 125000, "Aktif"],
+          ["TH", "Thailand", "Premium", 1, 1, 0, 240000, "Aktif"], ["TH", "Thailand", "Premium", 2, 5, 0, 140000, "Aktif"], ["TH", "Thailand", "Premium", 6, 20, 0, 110000, "Aktif"], ["TH", "Thailand", "Premium", 21, 999, 0, 105000, "Aktif"],
+          ["VN", "Vietnam", "Premium", 1, 1, 0, 240000, "Aktif"], ["VN", "Vietnam", "Premium", 2, 5, 0, 140000, "Aktif"], ["VN", "Vietnam", "Premium", 6, 20, 0, 110000, "Aktif"], ["VN", "Vietnam", "Premium", 21, 999, 0, 100000, "Aktif"],
+          ["IN", "India", "Premium", 1, 1, 0, 240000, "Aktif"], ["IN", "India", "Premium", 2, 5, 0, 140000, "Aktif"], ["IN", "India", "Premium", 6, 20, 0, 135000, "Aktif"], ["IN", "India", "Premium", 21, 999, 0, 135000, "Aktif"]
+        ];
+        
+        // Auto Populate Country Dropdowns based on Data
+        let uniqueCountries = [...new Set(dataAsli.map(t => t[1]))];
+        let selectFinance = document.getElementById('negara');
+        let selectTarif = document.getElementById('tarifNegara');
+        if (selectFinance && selectTarif) {
+            let optionsHTML = '<option value="">-- Pilih Negara --</option>';
+            uniqueCountries.forEach(country => {
+                optionsHTML += `<option value="${country}">${country}</option>`;
+            });
+            selectFinance.innerHTML = optionsHTML;
+            selectTarif.innerHTML = optionsHTML;
+        }
+
+        masterTarif = dataAsli.map(t => ({ negara: t[1], minBerat: t[3], maxBerat: t[4], tarifModal: t[5], tarifJual: t[6] }));
       // transactions loaded from Firebase automatically
       let d = new Date();
       document.getElementById("tanggalInput").value = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
@@ -1783,7 +1794,83 @@ function initDatabase() {
       document.getElementById('tarifResult').classList.remove('d-none');
     }
 
-    function hitungBiaya() {
+          function openVolumeModal(target) {
+        Swal.fire({
+            title: '<i class="fa-solid fa-box-open text-warning me-2"></i> Hitung Berat Volume',
+            html: `
+                <div class="text-start mb-3 text-muted" style="font-size:0.85rem;">Rumus Standar: <b>(P x L x T) / Pembagi</b></div>
+                <div class="row gx-2 mb-3">
+                    <div class="col-4">
+                        <label class="form-label" style="font-size:0.8rem; font-weight:bold;">Panjang (cm)</label>
+                        <input id="volP" type="number" class="form-control text-center" placeholder="P">
+                    </div>
+                    <div class="col-4">
+                        <label class="form-label" style="font-size:0.8rem; font-weight:bold;">Lebar (cm)</label>
+                        <input id="volL" type="number" class="form-control text-center" placeholder="L">
+                    </div>
+                    <div class="col-4">
+                        <label class="form-label" style="font-size:0.8rem; font-weight:bold;">Tinggi (cm)</label>
+                        <input id="volT" type="number" class="form-control text-center" placeholder="T">
+                    </div>
+                </div>
+                <div class="text-start">
+                    <label class="form-label" style="font-size:0.8rem; font-weight:bold;">Angka Pembagi (Divisor)</label>
+                    <select id="volDivisor" class="form-select">
+                        <option value="5000">5000 (Standar Udara)</option>
+                        <option value="6000">6000 (Standar Darat/Laut)</option>
+                        <option value="4000">4000 (Khusus)</option>
+                    </select>
+                </div>
+            `,
+            showCancelButton: true,
+            confirmButtonColor: '#f59e0b',
+            confirmButtonText: 'Terapkan Berat',
+            cancelButtonText: 'Batal',
+            preConfirm: () => {
+                let p = parseFloat(document.getElementById('volP').value) || 0;
+                let l = parseFloat(document.getElementById('volL').value) || 0;
+                let t = parseFloat(document.getElementById('volT').value) || 0;
+                let d = parseFloat(document.getElementById('volDivisor').value) || 5000;
+                
+                if(p === 0 || l === 0 || t === 0) {
+                    Swal.showValidationMessage('Mohon masukkan angka Panjang, Lebar, dan Tinggi');
+                    return false;
+                }
+                return (p * l * t) / d;
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                let vWeight = result.value;
+                let targetInput = target === 'finance' ? document.getElementById('beratAktual') : document.getElementById('tarifBerat');
+                let actualWeight = parseFloat(targetInput.value) || 0;
+                
+                let finalWeight = Math.max(vWeight, actualWeight);
+                
+                targetInput.value = finalWeight.toFixed(2);
+                
+                Swal.fire({
+                    title: 'Hasil Perhitungan',
+                    html: `
+                        <table class="table table-sm text-start mt-3">
+                            <tr><td>Berat Aktual (Timbangan)</td><td>: <b>${actualWeight} Kg</b></td></tr>
+                            <tr><td>Berat Volume (PxLxT)</td><td>: <b>${vWeight.toFixed(2)} Kg</b></td></tr>
+                            <tr class="table-warning"><td><b>Chargeable Weight</b></td><td>: <b class="text-danger">${finalWeight.toFixed(2)} Kg</b></td></tr>
+                        </table>
+                        <div class="text-muted mt-2" style="font-size:0.8rem;">Chargeable Weight menggunakan nilai terbesar.</div>
+                    `,
+                    icon: 'success'
+                });
+                
+                if(target === 'finance') {
+                    if(document.getElementById("negara").value) hitungBiaya();
+                } else if(target === 'tarif') {
+                    hitungTarifKhusus();
+                }
+            }
+        });
+      }
+      
+      function hitungBiaya() {
       let negara = document.getElementById('negara').value;
       let beratAktual = parseFloat(document.getElementById('beratAktual').value) || 0;
       if (!negara || beratAktual <= 0) return Swal.fire('Data Tidak Lengkap', 'Isi negara dan berat.', 'warning'); 
