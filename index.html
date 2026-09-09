@@ -18,25 +18,7 @@
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script> <!-- INVOICE GENERATOR -->
   
-    <!-- MOBILE BOTTOM NAV -->
-  <nav class="mobile-bottom-nav">
-    <div class="mob-nav-item active" onclick="switchPage('finance')" id="mob-nav-finance">
-      <i class="fa-solid fa-calculator"></i>
-      <span>Finance</span>
-    </div>
-    <div class="mob-nav-item" onclick="switchPage('marketing')" id="mob-nav-marketing">
-      <i class="fa-solid fa-bullhorn"></i>
-      <span>Sales</span>
-    </div>
-    <div class="mob-nav-item" onclick="switchPage('tarif')" id="mob-nav-tarif">
-      <i class="fa-solid fa-tags"></i>
-      <span>Cek Tarif</span>
-    </div>
-    <div class="mob-nav-item" onclick="openProfile()" id="mob-nav-profile">
-      <i class="fa-solid fa-user"></i>
-      <span>Profil</span>
-    </div>
-  </nav>
+    
 
   <script>
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
@@ -595,7 +577,7 @@
 
   <div class="container mt-4">
     
-    <!-- DASHBOARD STATS -->
+    <div id="dashboard-stats"><!-- DASHBOARD STATS -->
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h5 class="fw-bold text-muted mb-0" style="font-size: 1rem;"><i class="fa-solid fa-chart-simple me-2"></i> Ringkasan Keuangan</h5>
         <button class="btn btn-sm btn-primary fw-bold px-4 py-2 shadow-sm" style="border-radius: 8px;" onclick="openChartModal()"><i class="fa-solid fa-chart-pie me-2"></i> GRAFIK STATISTIK</button>
@@ -625,7 +607,7 @@
           <div class="stat-value text-danger" id="stat-piutang">Rp 0</div>
         </div>
       </div>
-    </div>
+    </div></div>
 
     
     
@@ -1015,25 +997,7 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
   
   <!-- SCRIPT UTAMA -->
-    <!-- MOBILE BOTTOM NAV -->
-  <nav class="mobile-bottom-nav">
-    <div class="mob-nav-item active" onclick="switchPage('finance')" id="mob-nav-finance">
-      <i class="fa-solid fa-calculator"></i>
-      <span>Finance</span>
-    </div>
-    <div class="mob-nav-item" onclick="switchPage('marketing')" id="mob-nav-marketing">
-      <i class="fa-solid fa-bullhorn"></i>
-      <span>Sales</span>
-    </div>
-    <div class="mob-nav-item" onclick="switchPage('tarif')" id="mob-nav-tarif">
-      <i class="fa-solid fa-tags"></i>
-      <span>Cek Tarif</span>
-    </div>
-    <div class="mob-nav-item" onclick="openProfile()" id="mob-nav-profile">
-      <i class="fa-solid fa-user"></i>
-      <span>Profil</span>
-    </div>
-  </nav>
+    
 
   <script>
     let masterTarif = [];
@@ -1421,39 +1385,45 @@
        return map[country] || country.toUpperCase().substring(0,3);
     }
 
-        function switchPage(page) {
-      let btnF = document.getElementById("tab-btn-finance");
-      let btnM = document.getElementById("tab-btn-marketing");
-      let btnT = document.getElementById("tab-btn-tarif");
-      
-      let pageF = document.getElementById("page-finance");
-      let pageM = document.getElementById("page-marketing");
-      let pageT = document.getElementById("page-tarif");
+              function switchPage(page) {
+        let btnF = document.getElementById("tab-btn-finance");
+        let btnM = document.getElementById("tab-btn-marketing");
+        let btnT = document.getElementById("tab-btn-tarif");
+        
+        let pageF = document.getElementById("page-finance");
+        let pageM = document.getElementById("page-marketing");
+        let pageT = document.getElementById("page-tarif");
+        let dashStats = document.getElementById("dashboard-stats");
 
-      if (page === "finance") {
-          if(pageF) pageF.classList.remove("d-none");
-          if(pageM) pageM.classList.add("d-none");
-          if(pageT) pageT.classList.add("d-none");
-          if(btnF) btnF.className = "btn btn-sm btn-light rounded-pill px-3 fw-bold shadow-sm";
-          if(btnM) btnM.className = "btn btn-sm btn-outline-light rounded-pill px-3 fw-bold opacity-75 ms-2";
-          if(btnT) btnT.className = "btn btn-sm btn-outline-light rounded-pill px-3 fw-bold opacity-75 ms-2";
-      } else if (page === "marketing") {
-          if(pageF) pageF.classList.add("d-none");
-          if(pageM) pageM.classList.remove("d-none");
-          if(pageT) pageT.classList.add("d-none");
-          if(btnM) btnM.className = "btn btn-sm btn-light rounded-pill px-3 fw-bold shadow-sm ms-2";
-          if(btnF) btnF.className = "btn btn-sm btn-outline-light rounded-pill px-3 fw-bold opacity-75";
-          if(btnT) btnT.className = "btn btn-sm btn-outline-light rounded-pill px-3 fw-bold opacity-75 ms-2";
-          loadMarketingData();
-      } else if (page === "tarif") {
-          if(pageF) pageF.classList.add("d-none");
-          if(pageM) pageM.classList.add("d-none");
-          if(pageT) pageT.classList.remove("d-none");
-          if(btnT) btnT.className = "btn btn-sm btn-light rounded-pill px-3 fw-bold shadow-sm ms-2";
-          if(btnF) btnF.className = "btn btn-sm btn-outline-light rounded-pill px-3 fw-bold opacity-75";
-          if(btnM) btnM.className = "btn btn-sm btn-outline-light rounded-pill px-3 fw-bold opacity-75 ms-2";
+        if (page === "finance") {
+            if(pageF) pageF.classList.remove("d-none");
+            if(pageM) pageM.classList.add("d-none");
+            if(pageT) pageT.classList.add("d-none");
+            if(dashStats) dashStats.classList.remove("d-none");
+            if(btnF) btnF.className = "btn btn-sm btn-light rounded-pill px-3 fw-bold shadow-sm";
+            if(btnM) btnM.className = "btn btn-sm btn-outline-light rounded-pill px-3 fw-bold opacity-75 ms-2";
+            if(btnT) btnT.className = "btn btn-sm btn-outline-light rounded-pill px-3 fw-bold opacity-75 ms-2";
+        } else if (page === "marketing") {
+            if(pageF) pageF.classList.add("d-none");
+            if(pageM) pageM.classList.remove("d-none");
+            if(pageT) pageT.classList.add("d-none");
+            if(dashStats) dashStats.classList.add("d-none");
+            if(btnM) btnM.className = "btn btn-sm btn-light rounded-pill px-3 fw-bold shadow-sm ms-2";
+            if(btnF) btnF.className = "btn btn-sm btn-outline-light rounded-pill px-3 fw-bold opacity-75";
+            if(btnT) btnT.className = "btn btn-sm btn-outline-light rounded-pill px-3 fw-bold opacity-75 ms-2";
+        } else if (page === "tarif") {
+            if(pageF) pageF.classList.add("d-none");
+            if(pageM) pageM.classList.add("d-none");
+            if(pageT) pageT.classList.remove("d-none");
+            if(dashStats) dashStats.classList.add("d-none");
+            if(btnT) btnT.className = "btn btn-sm btn-light rounded-pill px-3 fw-bold shadow-sm ms-2";
+            if(btnF) btnF.className = "btn btn-sm btn-outline-light rounded-pill px-3 fw-bold opacity-75";
+            if(btnM) btnM.className = "btn btn-sm btn-outline-light rounded-pill px-3 fw-bold opacity-75 ms-2";
+        }
+        
+        document.querySelectorAll(".mob-nav-item").forEach(n => n.classList.remove("active"));
+        if(document.getElementById("mob-nav-" + page)) document.getElementById("mob-nav-" + page).classList.add("active");
       }
-    }
     
     function openChartModal() {
         let modalEl = document.getElementById("chartModal");
@@ -2310,36 +2280,51 @@
         }
         document.getElementById('modalUserList').innerHTML = html;
     }
-    function addNewMember() {
-      Swal.fire({
-        title: 'Tambah Member Baru',
-        html: `
-          <input type="text" id="swal-input-user" class="swal2-input" placeholder="Username (huruf kecil)">
-          <input type="password" id="swal-input-pass" class="swal2-input" placeholder="Password">
-        `,
-        focusConfirm: false,
-        showCancelButton: true,
-        confirmButtonText: 'Simpan',
-        preConfirm: () => {
-          const user = document.getElementById('swal-input-user').value.toLowerCase().trim();
-          const pass = document.getElementById('swal-input-pass').value;
-          if (!user || !pass) { Swal.showValidationMessage(`Data tidak boleh kosong`); }
-          return { user: user, pass: pass };
-        }
-      }).then((result) => {
-        if (result.isConfirmed) {
-          let users = getUsers();
-          if (users[result.value.user]) {
-             Swal.fire('Error', 'Username sudah ada!', 'error');
-             return;
+          function addNewMember() {
+          let html = `
+            <div style="background: rgba(15,23,42,0.5); padding: 20px; border-radius: 16px; margin-top: 15px; margin-bottom: 15px; border: 1px solid #334155;">
+                <div style="color: #f59e0b; font-weight: bold; margin-bottom: 15px; font-size: 1.1rem;">
+                    <i class="fa-solid fa-user-plus me-2"></i> Tambah Akun Member
+                </div>
+                <div class="mb-3 text-start">
+                    <label class="form-label text-light" style="font-size:0.85rem;">Username (Huruf Kecil)</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-dark border-secondary text-light"><i class="fa-solid fa-user"></i></span>
+                        <input type="text" id="newMemUser" class="form-control bg-dark border-secondary text-light" placeholder="johndoe">
+                    </div>
+                </div>
+                <div class="mb-4 text-start">
+                    <label class="form-label text-light" style="font-size:0.85rem;">Password</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-dark border-secondary text-light"><i class="fa-solid fa-key"></i></span>
+                        <input type="password" id="newMemPass" class="form-control bg-dark border-secondary text-light" placeholder="••••••••">
+                    </div>
+                </div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-secondary flex-fill fw-bold" onclick="renderModalOwnerList()">BATAL</button>
+                    <button class="btn btn-warning flex-fill fw-bold" onclick="saveNewMember()"><i class="fa-solid fa-check me-2"></i> SIMPAN</button>
+                </div>
+            </div>
+          `;
+          document.getElementById('modalUserList').innerHTML = html;
+      }
+      
+      function saveNewMember() {
+          let user = document.getElementById('newMemUser').value.toLowerCase().trim();
+          let pass = document.getElementById('newMemPass').value;
+          if(!user || !pass) {
+              alert("Username dan Password tidak boleh kosong!");
+              return;
           }
-          users[result.value.user] = result.value.pass;
+          let users = getUsers();
+          if(users[user]) {
+              alert("Username sudah terpakai!");
+              return;
+          }
+          users[user] = pass;
           saveUsers(users);
-          Swal.fire('Sukses', 'Member baru ditambahkan!', 'success');
           renderModalOwnerList();
-        }
-      });
-    }
+      }
 
     function forceLogoutUser(username) {
         Swal.fire({
@@ -2421,5 +2406,25 @@
 
     initDatabase();
   </script>
+  <!-- MOBILE BOTTOM NAV -->
+  <nav class="mobile-bottom-nav">
+    <div class="mob-nav-item active" onclick="switchPage('finance')" id="mob-nav-finance">
+      <i class="fa-solid fa-calculator"></i>
+      <span>Finance</span>
+    </div>
+    <div class="mob-nav-item" onclick="switchPage('marketing')" id="mob-nav-marketing">
+      <i class="fa-solid fa-bullhorn"></i>
+      <span>Sales</span>
+    </div>
+    <div class="mob-nav-item" onclick="switchPage('tarif')" id="mob-nav-tarif">
+      <i class="fa-solid fa-tags"></i>
+      <span>Cek Tarif</span>
+    </div>
+    <div class="mob-nav-item" onclick="openProfile()" id="mob-nav-profile">
+      <i class="fa-solid fa-user"></i>
+      <span>Profil</span>
+    </div>
+  </nav>
+
 </body>
 </html>
