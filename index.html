@@ -2480,7 +2480,7 @@ if (typeof db !== "undefined") {
   <button id="ai-chat-btn" onclick="toggleAIChat()"><i class="fa-solid fa-robot"></i></button>
   <div id="ai-chat-window">
       <div class="ai-chat-header">
-          <div><i class="fa-solid fa-robot me-2"></i> SkyBot AI (V5)</div>
+          <div><i class="fa-solid fa-robot me-2"></i> SkyBot AI (Universal)</div>
           <div>
               <i class="fa-solid fa-gear me-3" style="cursor:pointer; font-size:1rem;" onclick="setAPIKey()" title="Pengaturan AI"></i>
               <i class="fa-solid fa-times" style="cursor:pointer; font-size:1.1rem;" onclick="toggleAIChat()"></i>
@@ -2526,10 +2526,15 @@ if (typeof db !== "undefined") {
     }
 
     function setAPIKey() {
-        let key = prompt("Masukkan API Key OpenRouter Anda\n\nDapatkan secara GRATIS di: openrouter.ai\n(Ini adalah server paling stabil yang tidak akan pernah error/decommission)");
-        if(key) {
+        let url = prompt("Masukkan API Base URL (Dapatkan dari Repo GitHub yang Anda maksud):\nContoh: https://api.chatanywhere.tech/v1/chat/completions", localStorage.getItem("skybot_api_url") || "https://api.openai.com/v1/chat/completions");
+        let model = prompt("Masukkan Nama Model (Contoh: gpt-3.5-turbo, gpt-4, dll):", localStorage.getItem("skybot_api_model") || "gpt-3.5-turbo");
+        let key = prompt("Masukkan API Key Anda:", localStorage.getItem("skybot_api_key") || "");
+        
+        if(url && model && key) {
+            localStorage.setItem("skybot_api_url", url);
+            localStorage.setItem("skybot_api_model", model);
             localStorage.setItem("skybot_api_key", key);
-            alert("API Key berhasil disimpan! SkyBot siap digunakan.");
+            alert("Konfigurasi API Custom berhasil disimpan! SkyBot siap digunakan.");
         }
     }
 
@@ -2538,9 +2543,12 @@ if (typeof db !== "undefined") {
         let text = inputEl.value.trim();
         if(!text) return;
 
+        let apiUrl = localStorage.getItem("skybot_api_url");
+        let apiModel = localStorage.getItem("skybot_api_model");
         let apiKey = localStorage.getItem("skybot_api_key");
-        if(!apiKey) {
-            Swal.fire('API Key Diperlukan', 'Klik ikon ⚙️ (Gear) di sudut atas chat ini untuk memasukkan API Key OpenRouter Anda.', 'info');
+
+        if(!apiKey || !apiUrl || !apiModel) {
+            Swal.fire('API Belum Disetting', 'Klik ikon ⚙️ (Gear) di sudut atas chat ini untuk memasukkan URL, Model, dan API Key dari grup GitHub Anda.', 'info');
             return;
         }
 
@@ -2563,52 +2571,38 @@ ATURAN KERJA AGENT:
 3. JANGAN PERNAH memberikan informasi harga, rute, atau promo yang tidak ada di data di atas. Jika data tidak ada, minta maaf dan katakan akan ditangani CS manusia.
 4. Jawab dengan paragraf yang rapi dan gunakan emoji.`;
 
-        // BULLETPROOF FALLBACK SYSTEM
-        // Jika server satu penuh/error, otomatis pindah ke server lain dalam sepersekian detik
-        const freeModels = [
-            "google/gemma-2-9b-it:free",
-            "qwen/qwen-2-7b-instruct:free",
-            "meta-llama/llama-3-8b-instruct:free",
-            "mistralai/mistral-7b-instruct:free"
-        ];
-
-        let success = false;
-        let lastError = "";
-
-        for (let model of freeModels) {
-            try {
-                let response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-                    method: "POST",
-                    headers: { 
-                        "Content-Type": "application/json",
-                        "Authorization": "Bearer " + apiKey,
-                        "HTTP-Referer": "https://skylandexpressid.github.io", 
-                        "X-Title": "Skyland Express AI"
-                    },
-                    body: JSON.stringify({
-                        model: model,
-                        messages: [
-                            { role: "system", content: systemPrompt },
-                            { role: "user", content: text }
-                        ],
-                        temperature: 0.1
-                    })
-                });
-                
-                let data = await response.json();
-                
-                if(!data.error && data.choices && data.choices[0].message) {
-                    document.getElementById("ai-typing").style.display = "none";
-                    appendChat("bot", data.choices[0].message.content);
-                    success = true;
-                    break; // Berhenti mencari jika sukses
-                } else if (data.error) {
-                    lastError = data.error.message;
-                    console.log("Model " + model + " error: " + lastError + ". Mencoba model selanjutnya...");
-                }
-            } catch(e) {
-                lastError = "Koneksi terputus.";
+        try {
+            let response = await fetch(apiUrl, {
+                method: "POST",
+                headers: { 
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + apiKey
+                },
+                body: JSON.stringify({
+                    model: apiModel,
+                    messages: [
+                        { role: "system", content: systemPrompt },
+                        { role: "user", content: text }
+                    ],
+                    temperature: 0.1
+                })
+            });
+            
+            let data = await response.json();
+            document.getElementById("ai-typing").style.display = "none";
+            
+            if(data.error) {
+                appendChat("bot", "<i>[Error dari API Custom]: " + data.error.message + "</i>");
+            } else if (data.choices && data.choices[0].message) {
+                appendChat("bot", data.choices[0].message.content);
+            } else {
+                appendChat("bot", "<i>Maaf, AI gagal memproses data tersebut. Format API mungkin tidak cocok.</i>");
             }
+        } catch(e) {
+            document.getElementById("ai-typing").style.display = "none";
+            appendChat("bot", "<i>[Error API Custom]: Koneksi terputus atau URL API ditolak (CORS). Pastikan URL valid.</i>");
+        }
+    }
         }
 
         if(!success) {
