@@ -2603,13 +2603,6 @@ ATURAN KERJA AGENT:
             appendChat("bot", "<i>[Error API Custom]: Koneksi terputus atau URL API ditolak (CORS). Pastikan URL valid.</i>");
         }
     }
-        }
-
-        if(!success) {
-            document.getElementById("ai-typing").style.display = "none";
-            appendChat("bot", "<i>[Error AI]: Semua server gratis dunia saat ini sedang penuh. Pesan terakhir: " + lastError + "</i>");
-        }
-    }
 
     function appendChat(role, text) {
         let body = document.getElementById("ai-chat-body");
