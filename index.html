@@ -615,7 +615,8 @@
             <!-- Bottom Controls -->
             <div style="padding: 12px; background:#0f172a; display:flex; flex-direction:column; gap:8px;">
               <p style="color:#94a3b8; font-size:0.78rem; text-align:center; margin:0;"><i class="fa-solid fa-lightbulb text-warning me-1"></i> Arahkan seluruh resi ke kotak kuning. Barcode + teks akan terisi otomatis.</p>
-              <button id="snapBtn" type="button" onclick="snapAndOCR()" class="btn btn-warning w-100 fw-bold py-3 mb-2" style="border-radius:15px; font-size:1.1rem; box-shadow:0 4px 15px rgba(245,158,11,.3);"><i class="fa-solid fa-camera me-2"></i>SCAN SEKARANG (OCR PENUH)</button>
+              <button id="snapBtn" type="button" onclick="snapAndOCR()" class="btn btn-warning w-100 fw-bold py-3 mb-2" style="border-radius:15px; font-size:1.1rem; box-shadow:0 4px 15px rgba(245,158,11,.3);"><i class="fa-solid fa-camera me-2"></i>SCAN SEKARANG (SMART OCR)</button>
+
              
             </div>
           </div>
@@ -1010,12 +1011,14 @@
     }
 
         // ============================================================
-    // === OCR SPACE (GRATIS) & OPENAI GPT-4o (ULTRA) ===
+        // ============================================================
+        // ============================================================
+    // === GOD TIER PARSER (TANPA API KEY / PIHAK KETIGA) ===
     // ============================================================
     async function scanWithOCRSpace(base64img) {
       let formData = new FormData();
       formData.append('base64image', 'data:image/jpeg;base64,' + base64img);
-      formData.append('apikey', 'K82597950288957'); // Public Free Key
+      formData.append('apikey', 'K82597950288957'); // Public Free Key (Tidak butuh dari user)
       formData.append('language', 'eng');
       formData.append('OCREngine', '2'); 
 
@@ -1028,7 +1031,7 @@
       return data.ParsedResults[0].ParsedText;
     }
 
-                            function parseRawText(fullText) {
+    function parseRawText(fullText) {
       let result = { waybill: "", country: "", weight: "", consignee: "", shipper: "", phone: "", id_arc: "" };
       let lines = fullText.split('\n').map(l => l.trim().toUpperCase()).filter(l => l.length > 1);
       let joined = lines.join(' ');
@@ -1038,13 +1041,10 @@
       if (shipperLine) {
         let parts = shipperLine.split(/[:;]/);
         if (parts.length > 1) {
-                    result.shipper = parts[1].replace(/[^A-Z\s\.\&]/g, '').trim();
-          // Jika OCR menggabungkan nama dan alamat, dan ini adalah resi Skyland, potong bersih!
-          if (result.shipper.includes('SKYLAND EXPRESS')) {
-            result.shipper = 'SKYLAND EXPRESS';
-          }
+          result.shipper = parts[1].replace(/[^A-Z\s\.\&]/g, '').trim();
         }
       }
+      if (result.shipper && result.shipper.includes('SKYLAND EXPRESS')) result.shipper = 'SKYLAND EXPRESS';
 
       // 2. CONSIGNEE (Penerima) - Ambil HANYA dari baris yang sama dengan tulisan CONSIGNEE
       let consLine = lines.find(l => l.includes('CONSIGNEE') && l.includes(':'));
@@ -1054,8 +1054,6 @@
           result.consignee = parts[1].replace(/[^A-Z\s\.\&]/g, '').trim();
         }
       }
-
-      // Jika tidak ada kata CONSIGNEE, gunakan fallback baris
       if (!result.consignee) {
         for (let i = lines.length - 1; i >= 0; i--) {
           let nMatch = lines[i].match(/(?:TO|PENERIMA|NAME|RCV|RECEIVER)\s*[:\-]\s*(.+)/);
@@ -1070,12 +1068,10 @@
       let hpRegex = /(?:TEL|PHONE|HP|P:)?\s*[:\-\s]*((?:\+?\d{2,3}[\s\-]?)?(?:0|1|8|9|6)\d{1,3}[\s\-]?\d{3,4}[\s\-]?\d{3,4})/g;
       let hpMatches = [...joined.matchAll(hpRegex)];
       if (hpMatches.length > 0) {
-        // Ambil nomor yang paling akhir di dokumen (Penerima pasti di bawah)
         result.phone = hpMatches[hpMatches.length - 1][1].replace(/[^0-9]/g, '');
       }
 
       // 4. ARC / ID NUMBER (EKSKLUSIF: Hanya ambil jika ada tulisan "ARC:" atau "IC:")
-      // Ini menjamin nomor telepon pengirim tidak akan nyasar ke sini.
       let arcExplicit = joined.match(/(?:ARC|ID|IC|KTP|PASSPORT)\s*[:;]\s*([A-Z0-9]+)/);
       if (arcExplicit && arcExplicit[1].length >= 6) {
         result.id_arc = arcExplicit[1].replace(/[\s\-]/g, '');
@@ -1151,8 +1147,7 @@
 
       try {
         // Pihak ke-3 GRATIS TANPA API KEY DARI USER
-        let rawText = await scanWithOCRSpace(base64);
-        let result = parseRawText(rawText);
+        let rawText = await scanWithOCRSpace(base64); let result = parseRawText(rawText);
         
         let filled = fillFormFromOCR(result, resiVal);
 
