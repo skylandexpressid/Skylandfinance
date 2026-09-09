@@ -2216,29 +2216,40 @@ if (typeof db !== "undefined") {
     }
     
     function doLogout() {
-      Swal.fire({
-        title: "Keluar dari Sistem?",
-        icon: "question",
-        showCancelButton: true,
-        confirmButtonColor: "#ef4444",
-        cancelButtonColor: "#334155",
-        confirmButtonText: "<i class=\"fa-solid fa-right-from-bracket me-1\"></i> Ya, Keluar",
-        cancelButtonText: "Batal"
-      }).then((res) => {
-        if (res.isConfirmed) {
-          let user = localStorage.getItem("sky_user");
-          if (user && typeof db !== "undefined") db.ref("active_sessions/" + user).remove();
-          
-          localStorage.removeItem("sky_auth");
-          localStorage.removeItem("sky_user");
-          localStorage.removeItem("sky_session");
-          document.getElementById("loginUser").value = "";
-          document.getElementById("loginPass").value = "";
-          switchTab("login");
-          document.getElementById("authOverlay").style.display = "flex";
+        // Hide profile modal if it's open to prevent Swal.fire blocking issue
+        let mEl = document.getElementById('profileModal');
+        if (mEl) {
+            let m = bootstrap.Modal.getInstance(mEl);
+            if (m) m.hide();
         }
-      });
-    }
+
+        Swal.fire({
+          title: "Keluar dari Sistem?",
+          icon: "question",
+          showCancelButton: true,
+          confirmButtonColor: "#ef4444",
+          cancelButtonColor: "#334155",
+          confirmButtonText: "<i class=\"fa-solid fa-right-from-bracket me-1\"></i> Ya, Keluar",
+          cancelButtonText: "Batal"
+        }).then((res) => {
+          if (res.isConfirmed) {
+            let user = localStorage.getItem("sky_user");
+            if (user && typeof db !== "undefined") db.ref("active_sessions/" + user).remove();
+            
+            localStorage.removeItem("sky_auth");
+            localStorage.removeItem("sky_user");
+            localStorage.removeItem("sky_session");
+            
+            location.reload();
+          } else {
+             // If they cancel, show profile modal again
+             if (mEl) {
+                 let m = bootstrap.Modal.getInstance(mEl);
+                 if (m) m.show();
+             }
+          }
+        });
+      }
     
     // Enter key support
     document.addEventListener("keydown", function(e) {
