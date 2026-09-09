@@ -1027,7 +1027,7 @@ if (typeof db !== "undefined") {
         if (!snap.exists()) {
             let localUsers = localStorage.getItem("sky_users");
             if (localUsers) {
-                db.ref("global_users").set(JSON.parse(localUsers));
+                db.ref("global_users").set(JSON.parse(localUsers)).catch(e => alert("Gagal Sinkron Awal: " + e.message));
             }
         }
     });
