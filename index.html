@@ -18,6 +18,26 @@
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script> <!-- INVOICE GENERATOR -->
   
+    <!-- MOBILE BOTTOM NAV -->
+  <nav class="mobile-bottom-nav">
+    <div class="mob-nav-item active" onclick="switchPage('finance')" id="mob-nav-finance">
+      <i class="fa-solid fa-calculator"></i>
+      <span>Finance</span>
+    </div>
+    <div class="mob-nav-item" onclick="switchPage('marketing')" id="mob-nav-marketing">
+      <i class="fa-solid fa-bullhorn"></i>
+      <span>Sales</span>
+    </div>
+    <div class="mob-nav-item" onclick="switchPage('tarif')" id="mob-nav-tarif">
+      <i class="fa-solid fa-tags"></i>
+      <span>Cek Tarif</span>
+    </div>
+    <div class="mob-nav-item" onclick="openProfile()" id="mob-nav-profile">
+      <i class="fa-solid fa-user"></i>
+      <span>Profil</span>
+    </div>
+  </nav>
+
   <script>
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
   </script>
@@ -451,6 +471,77 @@
         transition: 0.2s;
     }
 
+    /* MOBILE UI OVERHAUL */
+    @media (max-width: 768px) {
+        body { padding-bottom: 80px !important; background-color: #f8fafc; }
+        
+        .premium-navbar .d-flex.flex-wrap.gap-2 { display: none !important; }
+        .premium-navbar { 
+            position: sticky; top: 0; z-index: 1000;
+            padding: 15px 20px !important; border-radius: 0 0 20px 20px;
+            background: rgba(15, 23, 42, 0.95) !important;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            margin-bottom: 20px;
+        }
+        .brand-title { font-size: 1.1rem !important; }
+        
+        .mobile-bottom-nav {
+            display: flex !important;
+            position: fixed; bottom: 0; left: 0; right: 0;
+            background: #ffffff;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.05);
+            z-index: 1020;
+            padding: 10px 15px 15px;
+            justify-content: space-around;
+            border-radius: 20px 20px 0 0;
+        }
+        .mob-nav-item {
+            display: flex; flex-direction: column; align-items: center;
+            color: #94a3b8; font-size: 0.7rem; font-weight: 700;
+            text-decoration: none; cursor: pointer; transition: 0.3s;
+        }
+        .mob-nav-item i { font-size: 1.4rem; margin-bottom: 4px; transition: 0.3s; }
+        .mob-nav-item.active { color: #f59e0b; }
+        .mob-nav-item.active i { transform: translateY(-3px); }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #ffffff, #f8fafc);
+            border: none; border-radius: 16px;
+            box-shadow: 0 8px 15px rgba(0,0,0,0.03) !important;
+            padding: 15px !important; margin-bottom: 12px;
+        }
+        .stat-card.gold { background: linear-gradient(135deg, #fffbeb, #fef3c7); border-left: 4px solid #f59e0b; }
+        .stat-card.green { background: linear-gradient(135deg, #ecfdf5, #d1fae5); border-left: 4px solid #10b981; }
+        
+        .scan-zone {
+            background: #ffffff; border: none; border-radius: 16px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.04);
+            padding: 20px 10px; margin-bottom: 15px;
+        }
+        .form-control, .form-select {
+            background: #ffffff; border: 1px solid #e2e8f0;
+            border-radius: 12px; padding: 14px 15px; font-size: 0.95rem;
+        }
+        .btn-calculate, .btn-save { border-radius: 14px; padding: 16px; font-size: 1rem; }
+        
+        .table-premium thead { display: none; }
+        .table-premium tbody tr {
+            display: block; background: #fff; margin-bottom: 15px;
+            border-radius: 16px; padding: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border: 1px solid #f1f5f9; position: relative;
+        }
+        .table-premium tbody td {
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px dashed #e2e8f0; padding: 10px 0;
+            font-size: 0.85rem; text-align: right;
+        }
+        .table-premium tbody td:last-child { border-bottom: none; }
+        .table-premium tbody td::before {
+            content: attr(data-label); font-weight: 800; color: #64748b; text-transform: uppercase;
+        }
+    }
+    .mobile-bottom-nav { display: none; }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -924,6 +1015,26 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
   
   <!-- SCRIPT UTAMA -->
+    <!-- MOBILE BOTTOM NAV -->
+  <nav class="mobile-bottom-nav">
+    <div class="mob-nav-item active" onclick="switchPage('finance')" id="mob-nav-finance">
+      <i class="fa-solid fa-calculator"></i>
+      <span>Finance</span>
+    </div>
+    <div class="mob-nav-item" onclick="switchPage('marketing')" id="mob-nav-marketing">
+      <i class="fa-solid fa-bullhorn"></i>
+      <span>Sales</span>
+    </div>
+    <div class="mob-nav-item" onclick="switchPage('tarif')" id="mob-nav-tarif">
+      <i class="fa-solid fa-tags"></i>
+      <span>Cek Tarif</span>
+    </div>
+    <div class="mob-nav-item" onclick="openProfile()" id="mob-nav-profile">
+      <i class="fa-solid fa-user"></i>
+      <span>Profil</span>
+    </div>
+  </nav>
+
   <script>
     let masterTarif = [];
     let transactions = [];
