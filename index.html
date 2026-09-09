@@ -1028,7 +1028,7 @@
       return data.ParsedResults[0].ParsedText;
     }
 
-    function parseRawText(fullText) {
+        function parseRawText(fullText) {
       let result = { waybill: "", country: "", weight: "", consignee: "", phone: "", id_arc: "" };
       let lines = fullText.split('\n').map(l => l.trim()).filter(l => l.length > 0);
       let joined = lines.join(' ').toUpperCase();
@@ -1045,6 +1045,23 @@
       if(hpMatch) result.phone = hpMatch[0].replace(/[^0-9]/g, '');
 
       return result;
+    }
+
+    // ============================================================
+    // === FILL FORM FROM OCR RESULT ===
+    // ============================================================
+    function fillFormFromOCR(result, resiVal) {
+      let filled = [];
+      if (result.waybill && !resiVal) { document.getElementById('resi').value = result.waybill; filled.push('Resi'); }
+      if (result.country) { setCountry(result.country); filled.push('Negara: ' + result.country); }
+      if (result.weight) { 
+        let w = parseFloat(result.weight.replace(',','.').replace(/[^0-9.]/g,'')); 
+        if (w > 0) { document.getElementById('beratAktual').value = w; filled.push('Berat: ' + w + 'kg'); }
+      }
+      if (result.consignee) { document.getElementById('namaPenerima').value = result.consignee; filled.push('Nama'); }
+      if (result.phone) { document.getElementById('hpPenerima').value = result.phone.replace(/[\s\-]/g,''); filled.push('HP'); }
+      if (result.id_arc) { document.getElementById('idArc').value = result.id_arc; filled.push('ID/ARC'); }
+      return filled;
     }
 
     async function snapAndOCR() {
@@ -1764,9 +1781,15 @@ function initDatabase() {
     // Base admin accounts (stored locally as fallback)
     const BASE_USERS = { "silverio": "skyland030704" };
 
-    function getUsers() {
+        function getUsers() {
       let stored = localStorage.getItem("sky_users");
-      if (stored) return Object.assign({}, BASE_USERS, JSON.parse(stored));
+      if (stored) {
+        try {
+          return Object.assign({}, BASE_USERS, JSON.parse(stored));
+        } catch(e) {
+          localStorage.removeItem("sky_users");
+        }
+      }
       return Object.assign({}, BASE_USERS);
     }
     function saveUsers(users) {
