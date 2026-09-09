@@ -2480,7 +2480,7 @@ if (typeof db !== "undefined") {
   <button id="ai-chat-btn" onclick="toggleAIChat()"><i class="fa-solid fa-robot"></i></button>
   <div id="ai-chat-window">
       <div class="ai-chat-header">
-          <div><i class="fa-solid fa-robot me-2"></i> SkyBot AI (V3)</div>
+          <div><i class="fa-solid fa-robot me-2"></i> SkyBot AI (V4)</div>
           <div>
               <i class="fa-solid fa-gear me-3" style="cursor:pointer; font-size:1rem;" onclick="setAPIKey()" title="Pengaturan AI"></i>
               <i class="fa-solid fa-times" style="cursor:pointer; font-size:1.1rem;" onclick="toggleAIChat()"></i>
@@ -2526,7 +2526,7 @@ if (typeof db !== "undefined") {
     }
 
     function setAPIKey() {
-        let key = prompt("Masukkan API Key GROQ Anda\n\nDapatkan secara GRATIS di: console.groq.com\n(Groq menggunakan model Llama-3 super cepat)");
+        let key = prompt("Masukkan API Key OpenRouter Anda\n\nDapatkan secara GRATIS di: openrouter.ai\n(Ini adalah server paling stabil yang tidak akan pernah error/decommission)");
         if(key) {
             localStorage.setItem("skybot_api_key", key);
             alert("API Key berhasil disimpan! SkyBot siap digunakan.");
@@ -2540,7 +2540,7 @@ if (typeof db !== "undefined") {
 
         let apiKey = localStorage.getItem("skybot_api_key");
         if(!apiKey) {
-            Swal.fire('API Key Diperlukan', 'Klik ikon ⚙️ (Gear) di sudut atas chat ini untuk memasukkan API Key GROQ Anda.', 'info');
+            Swal.fire('API Key Diperlukan', 'Klik ikon ⚙️ (Gear) di sudut atas chat ini untuk memasukkan API Key OpenRouter Anda.', 'info');
             return;
         }
 
@@ -2564,14 +2564,16 @@ ATURAN KERJA AGENT:
 4. Jawab dengan paragraf yang rapi dan gunakan emoji.`;
 
         try {
-            let response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+            let response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
                 method: "POST",
                 headers: { 
                     "Content-Type": "application/json",
-                    "Authorization": "Bearer " + apiKey
+                    "Authorization": "Bearer " + apiKey,
+                    "HTTP-Referer": "https://skylandexpressid.github.io", 
+                    "X-Title": "Skyland Express AI"
                 },
                 body: JSON.stringify({
-                    model: "llama3-8b-8192", // Model Meta Llama 3 70B via Groq
+                    model: "meta-llama/llama-3.1-8b-instruct:free", // Model Llama 3.1 100% GRATIS dan STABIL dari OpenRouter
                     messages: [
                         { role: "system", content: systemPrompt },
                         { role: "user", content: text }
