@@ -1028,21 +1028,86 @@
       return data.ParsedResults[0].ParsedText;
     }
 
-        function parseRawText(fullText) {
+            function parseRawText(fullText) {
       let result = { waybill: "", country: "", weight: "", consignee: "", phone: "", id_arc: "" };
-      let lines = fullText.split('\n').map(l => l.trim()).filter(l => l.length > 0);
-      let joined = lines.join(' ').toUpperCase();
+      
+      // Bersihkan dan pisahkan per baris
+      let lines = fullText.split('\n')
+        .map(l => l.trim().toUpperCase())
+        .filter(l => l.length > 2 && !l.includes('***'));
 
-      // Negara
+      let joined = lines.join(' ');
+
+      // 1. NEGARA (Menggunakan Database Super Akurat)
       result.country = detectCountry(joined);
 
-      // Berat
-      let beratMatch = joined.match(/(\d+[\.,]\d+|\d+)\s*KG/);
-      if(beratMatch) result.weight = beratMatch[1];
+      // 2. BERAT AKTUAL (Pendeteksi Angka + KG yang sangat toleran)
+      let beratMatch = joined.match(/(?:WEIGHT|WT|BERAT)?\s*[:\-\s]*(\d+[\.,]\d+|\d+)\s*(?:KGS?|KILOS?)/);
+      if (beratMatch) {
+        result.weight = beratMatch[1];
+      }
 
-      // HP
-      let hpMatch = joined.match(/(?:\+?6|0)[0-9\-\s]{8,13}/);
-      if(hpMatch) result.phone = hpMatch[0].replace(/[^0-9]/g, '');
+      // 3. NOMOR HP (Mendukung format Taiwan, Malaysia, SG, Indo, dll)
+      // Pola: +886 912345678, 0912-345-678, +60 12-345 6789, 0123456789
+      let phoneRegex = /(?:TEL|PHONE|HP|P:)?\s*[:\-\s]*((?:\+?\d{2,3}[\s\-]?)?(?:0|1|8|9)\d{1,3}[\s\-]?\d{3,4}[\s\-]?\d{3,4})/g;
+      let hpMatches = [...joined.matchAll(phoneRegex)];
+      if (hpMatches.length > 0) {
+        // Ambil nomor yang paling panjang (kemungkinan HP penerima, bukan sekadar kode pos)
+        let bestPhone = hpMatches.sort((a,b) => b[1].length - a[1].length)[0][1];
+        result.phone = bestPhone.replace(/[^0-9+]/g, '');
+      }
+
+      // 4. ARC NUMBER / KTP / PASPOR / ID (Taiwan ARC, Malaysia IC)
+      // Pola Taiwan: 1 Huruf diikuti 9 Angka (A123456789)
+      // Pola Malaysia IC: 12 Angka (123456-12-1234)
+      let arcRegex = /\b([A-Z][12A-D]\d{8})\b/; // Taiwan ARC
+      let icRegex = /\b(\d{6}[\s\-]?\d{2}[\s\-]?\d{4})\b/; // Malaysia IC
+      let passportRegex = /\b([A-Z]\d{7,8})\b/; 
+      
+      let arcMatch = joined.match(arcRegex) || joined.match(icRegex) || joined.match(passportRegex);
+      if (arcMatch) {
+        result.id_arc = arcMatch[1].replace(/[\s\-]/g, '');
+      }
+
+      // 5. WAYBILL / RESI (Biasanya alphanumeric panjang di bawah barcode)
+      let waybillRegex = /(?:AWB|RESI|TRACKING|NO|WAYBILL)?\s*[:\-\s]*([A-Z0-9]{9,18})\b/;
+      let wbMatch = joined.match(waybillRegex);
+      if (wbMatch && !wbMatch[1].includes('KG') && wbMatch[1].length > 8) {
+        result.waybill = wbMatch[1];
+      }
+
+      // 6. NAMA PENERIMA (Mendeteksi baris yang berisi nama)
+      // Strategi: Cari kata "TO:", "PENERIMA:", "CONSIGNEE:", "NAME:"
+      let nameFound = false;
+      for (let i = 0; i < lines.length; i++) {
+        let line = lines[i];
+        let nameMatch = line.match(/(?:TO|PENERIMA|CONSIGNEE|NAME|RCV|RECEIVER)\s*[:\-]\s*(.+)/);
+        if (nameMatch && nameMatch[1].length > 2) {
+          result.consignee = nameMatch[1].replace(/[0-9]/g, '').trim(); // Hapus angka
+          nameFound = true;
+          break;
+        }
+      }
+
+      // Jika tidak ada label "TO:", ambil baris TEPAT DI ATAS nomor HP atau alamat
+      if (!nameFound) {
+        for (let i = 1; i < lines.length; i++) {
+          let line = lines[i];
+          if (line.match(/(?:\+?\d{2,3})?(?:0|1|8|9)\d{7,10}/) || line.includes(result.country)) {
+            // Baris ini adalah HP atau Negara. Berarti baris sebelumnya (i-1) kemungkinan adalah NAMA atau ALAMAT.
+            let candidate = lines[i-1].replace(/[0-9\-:\+]/g, '').trim(); // Buang angka
+            if (candidate.length > 2 && candidate.length < 30) { // Nama biasanya tidak terlalu panjang
+              result.consignee = candidate;
+              break;
+            }
+          }
+        }
+      }
+
+      // Rapikan Nama (Hapus sisa-sisa simbol)
+      if (result.consignee) {
+        result.consignee = result.consignee.replace(/[^A-Z\s]/g, '').trim();
+      }
 
       return result;
     }
