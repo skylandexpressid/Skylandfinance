@@ -525,7 +525,26 @@
         }
     }
     .mobile-bottom-nav { display: none; }
-</style>
+    /* SKYBOT AI WIDGET */
+    #ai-chat-btn { position: fixed; bottom: 90px; right: 20px; width: 60px; height: 60px; background: linear-gradient(135deg, #10b981, #059669); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.8rem; box-shadow: 0 10px 25px rgba(16,185,129,0.5); cursor: pointer; z-index: 1050; transition: all 0.3s; border: none; }
+    #ai-chat-btn:hover { transform: scale(1.1); box-shadow: 0 15px 35px rgba(16,185,129,0.7); }
+    #ai-chat-window { position: fixed; bottom: 160px; right: 20px; width: 360px; height: 500px; max-height: calc(100vh - 180px); background: white; border-radius: 20px; box-shadow: 0 15px 40px rgba(0,0,0,0.25); display: none; flex-direction: column; z-index: 1050; overflow: hidden; border: 1px solid #e2e8f0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    .ai-chat-header { background: linear-gradient(135deg, #10b981, #059669); padding: 15px 20px; color: white; display: flex; justify-content: space-between; align-items: center; font-weight: bold; }
+    .ai-chat-body { flex: 1; padding: 15px; overflow-y: auto; background: #f8fafc; display: flex; flex-direction: column; gap: 12px; }
+    .ai-msg { max-width: 85%; padding: 12px 16px; border-radius: 15px; font-size: 0.9rem; line-height: 1.5; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+    .ai-msg.bot { background: #ffffff; color: #334155; align-self: flex-start; border-bottom-left-radius: 0; border: 1px solid #e2e8f0; }
+    .ai-msg.user { background: #10b981; color: white; align-self: flex-end; border-bottom-right-radius: 0; }
+    .ai-chat-input { display: flex; padding: 15px; background: white; border-top: 1px solid #e2e8f0; }
+    .ai-chat-input input { flex: 1; border: 1px solid #cbd5e1; border-radius: 20px; padding: 10px 15px; outline: none; font-size: 0.9rem; transition: 0.3s; }
+    .ai-chat-input input:focus { border-color: #10b981; box-shadow: 0 0 0 3px rgba(16,185,129,0.2); }
+    .ai-chat-input button { background: #10b981; color: white; border: none; border-radius: 50%; width: 40px; height: 40px; margin-left: 10px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
+    .ai-chat-input button:hover { background: #059669; transform: scale(1.05); }
+    .ai-typing { font-size: 0.8rem; color: #10b981; font-style: italic; display: none; margin-left: 15px; margin-bottom: 10px; font-weight: bold; }
+    
+    @media (max-width: 768px) {
+        #ai-chat-window { width: 90%; right: 5%; bottom: 160px; height: 450px; max-height: calc(100vh - 180px); }
+    }
+  </style>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </head>
@@ -2457,6 +2476,26 @@ if (typeof db !== "undefined") {
 
     initDatabase();
   </script>
+    <!-- SKYBOT AI WIDGET -->
+  <button id="ai-chat-btn" onclick="toggleAIChat()"><i class="fa-solid fa-robot"></i></button>
+  <div id="ai-chat-window">
+      <div class="ai-chat-header">
+          <div><i class="fa-solid fa-robot me-2"></i> SkyBot AI (Beta)</div>
+          <div>
+              <i class="fa-solid fa-gear me-3" style="cursor:pointer; font-size:1rem;" onclick="setAPIKey()" title="Pengaturan AI"></i>
+              <i class="fa-solid fa-times" style="cursor:pointer; font-size:1.1rem;" onclick="toggleAIChat()"></i>
+          </div>
+      </div>
+      <div class="ai-chat-body" id="ai-chat-body">
+          <div class="ai-msg bot">Halo! 👋 Saya <b>SkyBot</b>, AI Agent cerdas dari Skyland Express.<br><br>Saya telah membaca seluruh data harga ekspedisi Anda. Coba tanyakan sesuatu seperti:<br><i>"Berapa ongkir 5kg ke Taiwan?"</i></div>
+      </div>
+      <div class="ai-typing" id="ai-typing">SkyBot sedang menghitung...</div>
+      <div class="ai-chat-input">
+          <input type="text" id="ai-input" placeholder="Tanya sesuatu..." onkeypress="if(event.key === 'Enter') sendAIMessage()">
+          <button onclick="sendAIMessage()"><i class="fa-solid fa-paper-plane"></i></button>
+      </div>
+  </div>
+
   <!-- MOBILE BOTTOM NAV -->
   <nav class="mobile-bottom-nav">
     <div class="mob-nav-item active" onclick="switchPage('finance')" id="mob-nav-finance">
@@ -2477,5 +2516,97 @@ if (typeof db !== "undefined") {
     </div>
   </nav>
 
+<script>
+    // ==========================================
+    // SKYBOT AI AGENT LOGIC (RAG IMPLEMENTATION)
+    // ==========================================
+    function toggleAIChat() {
+        let w = document.getElementById("ai-chat-window");
+        w.style.display = w.style.display === "flex" ? "none" : "flex";
+    }
+
+    function setAPIKey() {
+        let key = prompt("Masukkan API Key GROQ Anda\n\nDapatkan secara GRATIS di: console.groq.com\n(Groq menggunakan model Llama-3 super cepat)");
+        if(key) {
+            localStorage.setItem("skybot_api_key", key);
+            alert("API Key berhasil disimpan! SkyBot siap digunakan.");
+        }
+    }
+
+    async function sendAIMessage() {
+        let inputEl = document.getElementById("ai-input");
+        let text = inputEl.value.trim();
+        if(!text) return;
+
+        let apiKey = localStorage.getItem("skybot_api_key");
+        if(!apiKey) {
+            Swal.fire('API Key Diperlukan', 'Klik ikon ⚙️ (Gear) di sudut atas chat ini untuk memasukkan API Key GROQ Anda.', 'info');
+            return;
+        }
+
+        appendChat("user", text);
+        inputEl.value = "";
+        document.getElementById("ai-typing").style.display = "block";
+
+        let knowledgeBase = masterTarif.map(t => `- Negara: ${t.negara} | Berat: ${t.minBerat}kg sampai ${t.maxBerat}kg | Harga: Rp ${t.tarifJual}/Kg`).join("\n");
+        
+        let systemPrompt = `Anda adalah SkyBot, AI Agent resmi dari perusahaan ekspedisi Skyland Express.
+Karakter Anda: Ramah, profesional, cepat, cerdas, dan hangat.
+Tugas utama Anda: Menghitung tagihan dan menjawab pertanyaan pelanggan berdasarkan HANYA pada data tarif realtime di bawah ini.
+
+DATA TARIF REALTIME SKYLAND EXPRESS:
+${knowledgeBase}
+
+ATURAN KERJA AGENT:
+1. Pahami rentang berat. Jika pelanggan tanya 5kg ke Taiwan, cari rentang yang mencakup 5kg (misal 3-5kg), lalu ambil harganya, kalikan dengan 5.
+2. Selalu berikan total akhir dan rincian perhitungannya agar pelanggan mengerti. Format uang: Rp XXX.XXX.
+3. JANGAN PERNAH memberikan informasi harga, rute, atau promo yang tidak ada di data di atas. Jika data tidak ada, minta maaf dan katakan akan ditangani CS manusia.
+4. Jawab dengan paragraf yang rapi dan gunakan emoji.`;
+
+        try {
+            let response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+                method: "POST",
+                headers: { 
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + apiKey
+                },
+                body: JSON.stringify({
+                    model: "llama3-70b-8192", // Model Meta Llama 3 70B via Groq
+                    messages: [
+                        { role: "system", content: systemPrompt },
+                        { role: "user", content: text }
+                    ],
+                    temperature: 0.1
+                })
+            });
+            
+            let data = await response.json();
+            document.getElementById("ai-typing").style.display = "none";
+            
+            if(data.error) {
+                appendChat("bot", "<i>[Error dari Server AI]: " + data.error.message + "</i>");
+            } else if (data.choices && data.choices[0].message) {
+                appendChat("bot", data.choices[0].message.content);
+            } else {
+                appendChat("bot", "<i>Maaf, AI gagal memproses data tersebut.</i>");
+            }
+        } catch(e) {
+            document.getElementById("ai-typing").style.display = "none";
+            appendChat("bot", "<i>Maaf, otak saya tidak dapat dijangkau saat ini. Cek koneksi internet Anda.</i>");
+        }
+    }
+
+    function appendChat(role, text) {
+        let body = document.getElementById("ai-chat-body");
+        let div = document.createElement("div");
+        div.className = "ai-msg " + role;
+        
+        let formattedText = text.replace(/\n/g, "<br>").replace(/\*\*(.*?)\*\*/g, "<b>$1</b>").replace(/\*(.*?)\*/g, "<i>$1</i>");
+        div.innerHTML = formattedText;
+        
+        body.appendChild(div);
+        body.scrollTop = body.scrollHeight;
+    }
+</script>
 </body>
 </html>
