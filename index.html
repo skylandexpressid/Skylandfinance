@@ -616,7 +616,7 @@
             <div style="padding: 12px; background:#0f172a; display:flex; flex-direction:column; gap:8px;">
               <p style="color:#94a3b8; font-size:0.78rem; text-align:center; margin:0;"><i class="fa-solid fa-lightbulb text-warning me-1"></i> Arahkan seluruh resi ke kotak kuning. Barcode + teks akan terisi otomatis.</p>
               <button id="snapBtn" type="button" onclick="snapAndOCR()" class="btn btn-warning w-100 fw-bold py-3 mb-2" style="border-radius:15px; font-size:1.1rem; box-shadow:0 4px 15px rgba(245,158,11,.3);"><i class="fa-solid fa-camera me-2"></i>SCAN SEKARANG (OCR PENUH)</button>
-             <button type="button" onclick="resetGeminiKey()" class="btn btn-outline-light w-100 py-2" style="border-radius:15px; font-size:0.85rem;"><i class="fa-solid fa-key me-2"></i>Ganti API Key Gemini</button>
+             
             </div>
           </div>
 
@@ -1009,25 +1009,7 @@
       }
     }
 
-    function saveGeminiKey(key) {
-      localStorage.setItem('gemini_key', key.trim());
-    }
-
-    function getGeminiKey() {
-      return localStorage.getItem('gemini_key') || '';
-    }
-
-    // ============================================================
-        // ============================================================
-    // === RESET API KEY ===
-    // ============================================================
-    function resetGeminiKey() {
-      localStorage.removeItem('gemini_key');
-      Swal.fire({
-        title: 'API Key Dihapus',
-        text: 'Silakan klik tombol Scan lagi untuk memasukkan API Key yang baru.',
-        icon: 'success'
-      });
+    );
     }
 
         // ============================================================
@@ -1098,7 +1080,7 @@
         let rawText = await scanWithOCRSpace(base64);
         let result = parseRawText(rawText);
         
-        let filled = fillFormFromGemini(result, resiVal);
+        let filled = fillFormFromOCR(result, resiVal);
 
         if (filled.length > 0) {
           Swal.fire({
