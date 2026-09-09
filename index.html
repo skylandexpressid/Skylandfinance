@@ -456,6 +456,7 @@
     /* MOBILE UI OVERHAUL */
     @media (max-width: 768px) {
         body { padding-bottom: 80px !important; background-color: #f8fafc; }
+        #userBadgeContainer, #logoutBtn { display: none !important; }
         
         .premium-navbar .d-flex.flex-wrap.gap-2 { display: none !important; }
         .premium-navbar { 
@@ -2252,19 +2253,39 @@ if (typeof db !== "undefined") {
     
     
     function openProfile() {
-        let currentUser = localStorage.getItem('sky_user');
-        if (currentUser !== 'silverio') return; // HANYA OWNER
-        
-        let html = '<div style="font-size:1.15rem; color: #f59e0b; font-weight: bold; margin-bottom: 20px; border-bottom: 1px solid #334155; padding-bottom: 10px;"><i class="fa-solid fa-users me-2"></i> KELOLA AKUN MEMBER</div>' +
-                   '<button type="button" class="btn btn-success w-100 mb-3" onclick="addNewMember()"><i class="fa-solid fa-user-plus me-2"></i>Tambah Member Baru</button><div id="modalUserList"></div>';
-
-        document.getElementById('profileModalBody').innerHTML = html;
-        let mEl = document.getElementById('profileModal');
-        let m = bootstrap.Modal.getInstance(mEl) || new bootstrap.Modal(mEl);
-        m.show();
-
-        renderModalOwnerList();
-    }
+          let currentUser = localStorage.getItem('sky_user');
+          
+          if (currentUser !== 'silverio') {
+              let html = `
+                <div class="text-center py-4">
+                    <div style="width:80px;height:80px;background:linear-gradient(135deg, #3b82f6, #1d4ed8);color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:bold;margin:0 auto 15px;box-shadow: 0 5px 15px rgba(59,130,246,0.4);">
+                        ${(currentUser || '?').charAt(0).toUpperCase()}
+                    </div>
+                    <h4 class="fw-bold text-light mb-1">@${currentUser}</h4>
+                    <span class="badge bg-primary mb-4 px-3 py-2" style="border-radius: 20px;">MEMBER AKSES</span>
+                    
+                    <button class="btn btn-danger w-100 fw-bold py-3 mt-2" style="border-radius: 12px; box-shadow: 0 5px 15px rgba(239,68,68,0.3);" onclick="doLogout()"><i class="fa-solid fa-right-from-bracket me-2"></i> KELUAR (LOGOUT)</button>
+                </div>
+              `;
+              document.getElementById('profileModalBody').innerHTML = html;
+              let mEl = document.getElementById('profileModal');
+              let m = bootstrap.Modal.getInstance(mEl) || new bootstrap.Modal(mEl);
+              m.show();
+              return;
+          }
+          
+          let html = '<div style="font-size:1.15rem; color: #f59e0b; font-weight: bold; margin-bottom: 20px; border-bottom: 1px solid #334155; padding-bottom: 10px;"><i class="fa-solid fa-users me-2"></i> KELOLA AKUN MEMBER</div>' +
+                     '<button type="button" class="btn btn-success w-100 mb-3 py-2 fw-bold" style="border-radius: 12px;" onclick="addNewMember()"><i class="fa-solid fa-user-plus me-2"></i>Tambah Member Baru</button>' +
+                     '<button type="button" class="btn btn-outline-danger w-100 mb-4 py-2 fw-bold" style="border-radius: 12px;" onclick="doLogout()"><i class="fa-solid fa-right-from-bracket me-2"></i>LOGOUT DARI OWNER</button>' +
+                     '<div id="modalUserList"></div>';
+  
+          document.getElementById('profileModalBody').innerHTML = html;
+          let mEl = document.getElementById('profileModal');
+          let m = bootstrap.Modal.getInstance(mEl) || new bootstrap.Modal(mEl);
+          m.show();
+  
+          renderModalOwnerList();
+      }
 
     function renderModalOwnerList() {
         let users = getUsers();
